@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<!-- Designed and developed by Business Solution Apps team -->
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>SmartDoctor</title>
+		<link rel="stylesheet" href="static/c.min.css" />
+		<link rel="stylesheet" href="static/jquery.mobile.icons.min.css" />
+		
+		<link rel="stylesheet" href="static/jquery.mobile-1.4.0.min.css" />
+        <script src="static/jquery-1.10.2.min.js"></script>
+        <script src="static/jquery.mobile-1.4.0.min.js"></script>
+		<script src="static/smart_doctor.js"></script>		
+		
+
+	<style>
+	table.tbl_preview tr td { border:1px solid #5FAFAF; background-color:#EFF8F8;}
+	.ui-radio{ width:100%;}
+	.ui-controlgroup-controls{ width:100%;}
+	.ui-controlgroup-vertical{ width:200%;}
+	
+	</style>
+    
+	<script type="text/javascript">
+function MM_jumpMenu(targ,selObj,restore){ //v3.0
+  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+  if (restore) selObj.selectedIndex=0;
+}
+    </script>
+    </head>
+	
+    <body>
+		 <!--===================== pageSync ==================-->
+		<div data-theme="c" data-role="page" id="login">
+            <div data-theme="c" data-role="header" data-position="fixed">				
+				<a  data-role="button" href="#pageHome" class="ui-btn-left ui-btn-icon-notext"><img src="menu.png"></a>
+                <h3>Authorization</h3>
+            </div>
+			
+            <div data-role="content">
+            	<div id="error_login" style="color:#C00"></div>                
+                    <form>					
+                        <input name="user_id" id="user_id"  value="" type="text" placeholder="UserID">
+                        <input type="text" name="user_pass" id="user_pass"  value="" placeholder="Password">
+                    </form>						
+				
+				<a data-role="button" id="loginButton" onClick="check_user();" >Sync</a>
+				<div align="center"><img id="wait_image_login" style="" width="50px;" src="loading.gif" alt=""></div>
+                                
+                <br><br><br><br><br><br><br><br><br><br>
+                        
+                <br><br><br><br><br><br>
+                       
+            </div>
+			
+        <!-- ==========footer====== -->	
+        <div data-theme="c" data-role="footer" data-position="fixed"></div>
+        
+        </div>		
+
+
+
+<!-- =====================Home page=============== -->
+		<div data-theme="c" data-role="page" id="pageHome">
+			<div data-role="panel" id="routePanel" data-display="overlay" style="width:60%; background-color:#FFF">
+				<!-- panel content goes here unilogo1.jpg-->
+				<div align="center">
+                <!--<img style="width:100%" src="lafarge.png" alt="GP" />-->
+                <br>
+				</div>
+                
+				<br><br><br><br>
+                
+				<ul data-role="listview">                    
+                    <br><br>
+                    <div style="background:#008A8A; height:1px"></div>
+                    <li ><div ><a href="#login" ><img src="sync.png"></a></div></li> 
+                    <div style="background:#008A8A; height:1px"></div>
+                </ul>
+                
+				<div style="margin:100%;"></div>
+				<!--<img src="lafarge.png" alt="Grameen Phone" />-->
+			</div><!-- /panel -->
+			
+            <div data-theme="c" data-role="header" data-position="fixed" >			
+				<a  data-role="button" href="#routePanel" class="ui-btn-left ui-btn-icon-notext"><img src="menu.png"></a>
+                <a  data-role="button" onClick="exit();" class="ui-btn-right" style="padding:4px;"><img src="exit.png" style="height:25px; width:25px;"></a>
+                <h3>Smart Doctor</h3>                
+                <!--<table>
+                	<tr><td><a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-search">Search</a></td><td><a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-user">Profile</a></td><td><a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-plus">App</a></td></tr>
+                </table>-->
+            </div>
+                        
+			<!--<img style="width:100%; height:40px"  src="images_2.jpg">-->
+            <div data-role="content" style="margin-top:0px; padding-top:0px">      
+            	<table>
+                	<tr><td><a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-search" onClick="search_page();" style="font-size:13px;">Search</a></td><td><a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-user" onClick="get_profile();" style="font-size:13px;">Profile</a></td><td><a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-plus" style="font-size:13px;">Saved App</a></td></tr>
+                </table><br>
+                <div id="error_home_page" style="color:#C00"></div>
+                
+                <div data-role="fieldcontain" style="font-size:20px;">
+                	
+                    <div class="ui-grid-a">
+                        <div class="ui-block-a" ><a data-role="button" id="btn_search" onClick="search_page('Medicine');" style="font-size:15px; color:#008040">Medicine</a></div><!--<img src="QueList.png">-->
+                        <div class="ui-block-b"><a data-role="button" id="btn_search" onClick="search_page('Cardiology');" style="font-size:15px; color:#008040">Cardiology</a></div>
+                                  
+                    </div>
+                    
+                    <div class="ui-grid-a">
+                        <div class="ui-block-a" ><a data-role="button" id="btn_search" onClick="search_page('Dental');" style="font-size:15px; color:#008040">Dental</a></div>
+                        <div class="ui-block-b"><a data-role="button" id="btn_search" onClick="search_page('Skin');" style="font-size:15px; color:#008040">Skin</a></div>
+                              
+                    </div>
+                    
+                    <div class="ui-grid-a">
+                        <div class="ui-block-a" ><a data-role="button" id="btn_search" onClick="search_page('Gastrology');" style="font-size:15px; color:#008040">Gastrology</a></div>
+                        <div class="ui-block-b"><a data-role="button" id="btn_search" onClick="search_page('Neurology');" style="font-size:15px; color:#008040">Neurology</a></div>
+                            
+                    </div>
+                    
+                     <div class="ui-grid-a">
+                        <div class="ui-block-a"><a data-role="button" id="btn_search" onClick="search_page('Orthopedic');" style="font-size:15px; color:#008040">Orthopedic</a></div>
+                        <div class="ui-block-b"><a data-role="button" id="btn_search" onClick="search_page('Eye');" style="font-size:15px; color:#008040">Eye</a></div>          
+                    </div>
+                      
+                      <div class="ui-grid-a">
+                        <div class="ui-block-a"><a data-role="button" id="btn_search" onClick="search_page('Gwynne');" style="font-size:15px; color:#008040">Gwynne</a></div>     
+                    </div>    
+                </div>
+                 
+             </div>	
+             
+             <div data-theme="c" data-role="footer" data-position="fixed"></div>
+             			
+      </div>
+
+
+<!--==================Chamber====================-->
+<div data-theme="c" data-role="page" id="page_search">
+    <div data-theme="c" data-role="header" data-position="fixed">
+    <a  data-role="button" href="#pageHome" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-home">&nbsp;</a>
+    <!--<a  data-role="button" href="#pageHome" class="ui-btn-left ui-btn-icon-notext"><img src="menu.png"></a>-->
+    <a data-role="button" data-rel="back"  data-icon="arrow-l" data-iconpos="left" class="ui-btn-right">Back</a>
+        <h3>Search</h3>
+    </div>
+    
+    <div data-role="content">
+        <div id="error_search_list" style="color:#C00"></div>	
+        
+        <select name="doctor_specialty" id="doctor_specialty_cmb_id" data-native-menu="false">
+        </select>
+        
+         <!-- List view-------------------->
+        <!--<input id="doctor_location_cmb_id" data-type="search" placeholder="Search">		-->        
+        <!--<ul id="doctor_location_cmb_id_lv" data-role="listview" data-filter="true" data-input="#doctor_location_cmb_id" data-inset="true">
+        </ul>-->                
+        <!-- List ---->
+        
+        <form class="ui-filterable">
+            <input id="doctor_location_cmb_id" data-type="search" placeholder="Search location..">
+        </form>
+        <ul id="doctor_location_cmb_id_lv" data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#doctor_location_cmb_id">
+        </ul>
+        
+        <br>
+        
+        <div align="center"><img id="wait_image_doctor_search" style="" width="50px;" src="loading.gif" alt=""></div>
+        
+    </div><!--/cont-->
+    
+    <div data-theme="c" data-role="footer" data-position="fixed"></div>			
+ </div><!--/page-->
+
+
+
+<!--==================Doctor List====================-->
+<div data-theme="c" data-role="page" id="page_doctor">
+    <div data-theme="c" data-role="header" data-position="fixed">
+    
+    <a  data-role="button" href="#pageHome" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-home">&nbsp;</a>
+    <!--<a  data-role="button" href="#pageHome" class="ui-btn-left ui-btn-icon-notext"><img src="menu.png"></a>-->
+    <a data-role="button" data-rel="back"  data-icon="arrow-l" data-iconpos="left" class="ui-btn-right">Back</a>
+        <h3>Doctor</h3>
+    </div>
+    
+    <div data-role="content" style="padding-top:0px; ">
+        <div id="error_doctor_list" style="color:#C00"></div>
+        
+        <ul data-role="listview" data-inset="true">					
+            <li style="background-color:#F2F2F2;">
+                <div><b>Specialty:</b><span class="specialty_show"></span></div>
+                <div><b>District&nbsp;&nbsp;&nbsp;&nbsp;:</b><span class="district_show"></span></div>
+            </li>
+        </ul>
+                
+         <!-- List view-------------------->
+        <input id="doctor_cmb_id" data-type="search" placeholder="Search">		        
+        <ul id="doctor_cmb_id_lv" data-role="listview" data-filter="true" data-input="#doctor_cmb_id" data-inset="true">
+        </ul>                
+        <!-- List ---->
+        
+        
+        <br>
+        <div align="center"><img id="wait_image_doctor_list" style="" width="50px;" src="loading.gif" alt=""></div>
+        
+    </div><!--/cont-->
+    
+    <div data-theme="c" data-role="footer" data-position="fixed"></div>			
+ </div><!--/page-->
+
+
+<!--================== ====================-->
+<div data-theme="c" data-role="page" id="page_doctor_chamber">
+    <div data-theme="c" data-role="header" data-position="fixed">    
+    <a  data-role="button" href="#pageHome" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-home">&nbsp;</a>
+    <a data-role="button" data-rel="back"  data-icon="arrow-l" data-iconpos="left" class="ui-btn-right">Back</a>
+        <h3 >Doctor Chamber</h3>
+    </div>
+    
+    <div data-role="content" style="padding-top:0px; ">
+        
+        <ul data-role="listview" data-inset="true">					
+            <li style="background-color:#F2F2F2;">
+                <div><b>Specialty:</b><span class="specialty_show"></span></div>
+                <div><b>District&nbsp;&nbsp;&nbsp;&nbsp;:</b><span class="district_show"></span></div>
+                <div><b>Doctor Name:</b><span class="doctor_name_show"></span></div>
+                <div><b>Doctor Code:</b><span class="doctor_id_show"></span></div>
+            </li>
+        </ul>
+                
+         <!-- List view-------------------->        		        
+        <!--<ul id="chamber_cmb_id_lv" data-role="listview" data-filter="false" data-input="#chamber_cmb_id" data-inset="true">
+        </ul>-->
+        
+        <div id="chamber_cmb_id_div"></div>
+               
+        <!-- List ---->
+        <input type="date" id="appointment_date" name="appointment_date" value="" placeholder="Select Appointment Date">
+         <br>
+         
+        <a data-role="button"  id="loginButton" onClick="appointment_submit();" >Request Appointment</a>
+        <br>
+        <div id="error_chamber_list" style="color:#C00"></div>
+        
+        <div align="center"><img id="wait_image_doctor_chamber" style="" width="50px;" src="loading.gif" alt=""></div>
+        
+        
+    </div><!--/cont-->
+    
+    <div data-theme="c" data-role="footer" data-position="fixed"></div>			
+ </div><!--/page-->
+
+
+
+
+<!--==========================Profile====================-->
+<div data-theme="c" data-role="page" id="page_profile">
+    <div data-theme="c" data-role="header" data-position="fixed">
+    <a  data-role="button" href="#pageHome" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-home">&nbsp;</a>
+    
+        <h3>Profile</h3>
+    </div>
+    
+    <div data-role="content">
+        
+        
+        
+        <table  border="1" class="ui-body-d ui-shadow table-stripe ui-responsive" data-role="table" data-theme="d"  data-mode="display:none" style="cell-spacing:0px; width:100%; border-bottom:solid; border-bottom-color:#999; font-size:70%;">
+        	<tr >
+              <td style="width:30%;" ><strong style="font-size:12px; color:#008040">Member ID</strong></td>
+              <td style="width:70%;" ><input id="patient_id" name="patient_id" type="text" style="background-color:#D9ECEC" readonly ></td>              
+            </tr>
+            <tr >
+              <td style="width:30%;" ><strong style="font-size:12px; color:#008040">Mobile</strong></td>
+              <td style="width:70%;" ><input  id="patient_mobile" name="patient_mobile"  type="text"  style="background-color:#D9ECEC" readonly></td>              
+            </tr>
+            
+            <tr >
+              <td style="width:30%;" ><strong style="font-size:12px; color:#008040">Name</strong></td>
+              <td style="width:70%;" ><input id="patient_name" name="patient_name" type="text"></td>              
+            </tr>
+            
+            <tr >
+              <td style="width:30%;" ><strong style="font-size:12px; color:#008040">Address</strong></td>
+              <td style="width:70%;" ><input  id="patient_address" name="patient_address"  type="text"></td>              
+            </tr>
+            </table>
+        <br>
+
+         <a data-role="button" onClick="profile_edit();" id="btn_profile_update">Update Profile</a>
+         
+    	<div id="error_profile_edit" style="color:#C00"></div>        
+        <div align="center"><img id="wait_image_profile" style="" width="50px;" src="loading.gif" alt=""></div>
+        
+    </div><!--/cont-->
+    <br>
+
+   	
+    
+    <br>
+<br>
+<br>
+<br>
+<br>
+
+    <div data-theme="c" data-role="footer" data-position="fixed"></div>			
+ </div><!--/page-->
+ 
+
+
+
+
+<!--========================New Appoinment==================-->
+     
+    <script type="text/javascript" src="phonegap.js"></script>
+    
+    
+    </body>
+</html>
