@@ -5,7 +5,7 @@ var apipath="http://eapps001.cloudapp.net/smart_doctor/syncmobile_patient/";
 //local
 //var apipath="http://127.0.0.1:8000/smart_doctor/syncmobile_patient/";
 
-
+var url =''
 var latitude="";
 var longitude="";
 
@@ -32,6 +32,8 @@ function replace_special_char(string_value){
 	return real_value;
 }
 
+// -------------
+
 $(document).ready(function(){
 		$("#wait_image_login").hide();
 		$("#loginButton").show();		
@@ -47,11 +49,17 @@ $(document).ready(function(){
 		
 		$(".specialty_show").text("");
 		$(".district_show").text("");
+		$("#doctor_area_district").val("");
+		
 		$(".doctor_name_show").text("");
 		$(".doctor_id_show").text("");
-		
-		//------------------------------			
-		var url = "#pageHome";
+		//alert(localStorage.synced)
+		// -------------- If Not synced, Show login
+		if ((localStorage.synced!='YES')){
+			url = "#login";				
+		}else{			
+			url = "#pageHome";
+		}
 		
 		$.mobile.navigate(url);
 		
@@ -60,7 +68,7 @@ $(document).ready(function(){
 
 
 function get_login() {
-	var url = "#login";
+	url = "#login";
 	$.mobile.navigate(url);
 	}
 
@@ -69,20 +77,28 @@ function get_login() {
 function check_user() {
 	var user_id=$("#user_id").val().toUpperCase();
 	var user_pass=$("#user_pass").val();
+	var user_name=$("#user_name").val();
+	var user_address=$("#user_address").val();
+	
 	
 	var base_url='';
 	var photo_url='';
 	
 	//-----
-	if (user_id=="" || user_id==undefined || user_pass=="" || user_pass==undefined){
-		$("#error_login").html("Required User ID and Password");	
+	if (user_id=="" || user_id==undefined || user_pass=="" || user_pass==undefined || user_name=="" || user_name==undefined){
+		$("#error_login").html("Required Member ID, PIN and Name");	
 	}else{
-		//-----------------
-			//alert(apipath+'check_user?patient_id='+user_id+'&password='+encodeURIComponent(user_pass)+'&sync_code='+localStorage.sync_code);
-						
+			localStorage.synced='NO'
+			$("#wait_image_login").show();
+			$("#loginButton").hide();
+			$("#error_home_page").html("")
+			
+			//-----------------
+			//alert(apipath+'check_user?patient_id='+user_id+'&password='+encodeURIComponent(user_pass)+'&patient_name='+encodeURIComponent(user_name)+'&patient_address='+encodeURIComponent(user_address)+'&sync_code='+localStorage.sync_code);
+			
 			$.ajax({
 					 type: 'POST',
-					 url: apipath+'check_user?patient_id='+user_id+'&password='+encodeURIComponent(user_pass)+'&sync_code='+localStorage.sync_code,
+					 url: apipath+'check_user?patient_id='+user_id+'&password='+encodeURIComponent(user_pass)+'&patient_name='+encodeURIComponent(user_name)+'&patient_address='+encodeURIComponent(user_address)+'&sync_code='+localStorage.sync_code,
 					 success: function(result) {											
 							if (result==''){
 								$("#wait_image_login").hide();
@@ -103,29 +119,38 @@ function check_user() {
 									localStorage.synced='YES';		
 									localStorage.user_id=user_id;
 									localStorage.user_pass=user_pass
-														
+									localStorage.user_name=user_name
+									localStorage.user_address=user_address
+									
+									
 									localStorage.sync_code=syncResultArray[1];
-									localStorage.districtStr=syncResultArray[2];
+									localStorage.locationStr=syncResultArray[2];
 									localStorage.specialtyStr=syncResultArray[3];
+									
+									localStorage.user_mobile=syncResultArray[4];
 									
 									
 									var doctorDistrictCombo='';
 									
-									var districtList = localStorage.districtStr.split('<fd>');
+									var districtList = localStorage.locationStr.split('<fd>');
 									var districtListLength=districtList.length
 									
 									
 									for (var i=0; i < districtListLength; i++){
-										var districtName = districtList[i]
+										var districtAreaName = districtList[i]
 										
-										if (districtName!=''){
-											doctorDistrictCombo+='<li class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-location" style="border-bottom-style:solid; border-color:#CBE4E4;border-bottom-width:thin"><a onClick="districtSearchNextLV(\''+districtName+'\')">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+districtName+'</a></li>';
+										if (districtAreaName!=''){
+											doctorDistrictCombo+='<li class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-location" style="border-bottom-style:solid; border-color:#CBE4E4;border-bottom-width:thin"><a onClick="districtSearchNextLV(\''+districtAreaName+'\')">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+districtAreaName+'</a></li>';
 											}		
 									}								
 									localStorage.districtCombo_list=doctorDistrictCombo
 									
+									
+									$("#wait_image_login").hide();
+									$("#loginButton").show();
+									
 									//----------------									
-									var url = "#pageHome";
+									url = "#pageHome";
 									$.mobile.navigate(url);								
 									
 								}else {									
@@ -151,6 +176,8 @@ function check_user() {
 function search_page(specialty_name){
 	$("#error_search_list").html("");
 	$("#wait_image_doctor_search").hide();
+	$("#doctor_location_cmb_id_lv").show();
+	
 	var spName=specialty_name;
 	
 	var specialtyList = localStorage.specialtyStr.split('<fd>');
@@ -176,14 +203,14 @@ function search_page(specialty_name){
 	//-------------
 	$("#doctor_location_cmb_id").val('');
 	var doctor_location_cmb_list=localStorage.districtCombo_list;
-	
+	//alert(doctor_location_cmb_list)
 	//---	
 	var doctor_location_cmb_ob=$('#doctor_location_cmb_id_lv');
 	doctor_location_cmb_ob.empty()
 	doctor_location_cmb_ob.append(doctor_location_cmb_list);
 	
 	//--------------------------	
-	var url = "#page_search";
+	url = "#page_search";
 	$.mobile.navigate(url);
 	
 	doctor_specialty_cmb_ob.selectmenu("refresh");
@@ -191,14 +218,15 @@ function search_page(specialty_name){
 	
 }
 
-
-
 function districtSearchNextLV(district) {
 	$("#error_search_list").html("");
 	$("#error_doctor_list").html("");		
 	$("#wait_image_doctor_list").hide();
 	$(".specialty_show").text("");
 	$(".district_show").text("");
+	$("#doctor_area_district").val("");
+	
+	$("#doctor_cmb_id_lv").show();
 	
 	$("#doctor_location_cmb_id").val(district);
 	doctor_list();	
@@ -206,34 +234,42 @@ function districtSearchNextLV(district) {
 	
 	
 function doctor_list(){
-	var districtName=$("#doctor_location_cmb_id").val();
+	var districtAreaName=$("#doctor_location_cmb_id").val();
 	
-	var specialty=$("#doctor_specialty_cmb_id").val();	
+	var specialty=$("#doctor_specialty_cmb_id").val();
+	var showSpecialty=specialty;
 	if (specialty==0 || specialty=='0'){
 		specialty='';
+		showSpecialty='Any';
 		}
 	
-	if (districtName==''){		
+	if (districtAreaName==''){		
 		$("#error_search_list").text("Select Location");
 	}else{
 			$("#error_search_list").text("");
+			
+			$("#doctor_location_cmb_id_lv").hide();
 			$("#wait_image_doctor_search").show();
 			
-			//alert(apipath+'get_doctor_list?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&speciality='+specialty+'&district='+districtName)
+			//alert(apipath+'get_doctor_list?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&speciality='+specialty+'&district_area='+districtAreaName)
+			
 			// ajax-------
 			$.ajax({
 				 type: 'POST',
-				 url: apipath+'get_doctor_list?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&speciality='+specialty+'&district='+districtName,
+				 url: apipath+'get_doctor_list?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&speciality='+specialty+'&district_area='+districtAreaName,
 				 success: function(result) {						
 						if (result==''){
 							$("#error_search_list").html('Sorry Network not available');							
 							$("#wait_image_doctor_search").hide();
+							$("#doctor_location_cmb_id_lv").show();
+							
 						}else{					
 							var resultArray = result.split('<SYNCDATA>');			
 							if (resultArray[0]=='FAILED'){						
 								$("#error_search_list").html(resultArray[1]);
 								$("#wait_image_doctor_search").hide();
-							
+								$("#doctor_location_cmb_id_lv").show();
+								
 							}else if (resultArray[0]=='SUCCESS'){
 									
 								var doctor_string=resultArray[1];
@@ -247,40 +283,48 @@ function doctor_list(){
 									var doctorListArray = doctorList[i].split('<fd>');
 									var doctorID=doctorListArray[0];
 									var doctorName=doctorListArray[1];
+									var description=doctorListArray[2];
 									if (doctorID!=''){
-										doctor_cmb_list+='<li style="border-bottom-style:solid; border-color:#CBE4E4;border-bottom-width:thin"><a onClick="doctorListNextLV(\''+doctorName+'-'+doctorID+'\')">'+doctorName+',</br>'+doctorID+'</a></li>';
+										doctor_cmb_list+='<li style="border-bottom-style:solid;border-color:#CBE4E4;border-bottom-width:thin;"><a style="height:auto;" onClick="doctorListNextLV(\''+doctorName+'-'+doctorID+'\')">'+doctorName+'-'+doctorID+'</a></li><p style="font-size:12px; margin-top:0px; padding-top:0px; background-color:#A4D6EE;">'+description+'</p>';
 									}
 								}
 								
 								//-----------------
 								$("#error_search_list").text("");
 								$("#wait_image_doctor_search").hide();
+								$("#doctor_location_cmb_id_lv").show();
 								
-								$(".specialty_show").text(specialty);
-								$(".district_show").text(districtName);
+								
+								$(".specialty_show").text(showSpecialty);
+								$(".district_show").text(districtAreaName);
+								$("#doctor_area_district").val(districtAreaName);
 								
 								//-------------
 								$("#doctor_cmb_id").val('');
 								
 								//---	
+								$("#doctor_cmb_id_lv").show();
+								
 								var doctor_cmb_ob=$('#doctor_cmb_id_lv');
 								doctor_cmb_ob.empty()
 								doctor_cmb_ob.append(doctor_cmb_list);
 								
 								//--------------------------	
-								var url = "#page_doctor";
+								url = "#page_doctor";
 								$.mobile.navigate(url);	
 								doctor_cmb_ob.listview("refresh");
 								
 							}else{						
 								$("#error_search_list").html('Server Error');
 								$("#wait_image_doctor_search").hide();
+								$("#doctor_location_cmb_id_lv").show();
 								}
 						}
 					  },
 				  error: function(result) {			  
 					  $("#error_search_list").html('Invalid Request');
-					  $("#wait_image_doctor_search").hide();	  
+					  $("#wait_image_doctor_search").hide();
+					  $("#doctor_location_cmb_id_lv").show();	  
 				  }
 			 });//end ajax
 	}
@@ -293,6 +337,8 @@ function doctorListNextLV(doctor) {
 	$("#wait_image_doctor_list").hide();
 	$(".doctor_name_show").text("");
 	$(".doctor_id_show").text("");
+	$("#appointment_date").val("");
+	$("#error_chamber_list").html("");
 	
 	
 	$("#doctor_cmb_id").val(doctor);
@@ -301,12 +347,14 @@ function doctorListNextLV(doctor) {
 	
 	
 	
-function doctor_chamber(){	
-	var doctorNameID=$("#doctor_cmb_id").val();
+function doctor_chamber(){
+	var areaDistrictName=$("#doctor_area_district").val();
 	
+	var doctorNameID=$("#doctor_cmb_id").val();
 	if (doctorNameID==''){		
 		$("#error_doctor_list").text("Select Doctor");
-	}else{
+	}else{	
+			$("#doctor_cmb_id_lv").hide();			
 			$("#error_doctor_list").text("");
 			$("#wait_image_doctor_list").show();
 			
@@ -321,14 +369,15 @@ function doctor_chamber(){
 				 url: apipath+'get_doctor_chamber?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&doctorId='+doctorId,
 				 success: function(result) {						
 						if (result==''){
-							$("#error_search_list").html('Sorry Network not available');							
+							$("#error_doctor_list").html('Sorry Network not available');							
 							$("#wait_image_doctor_list").hide();
+							$("#doctor_cmb_id_lv").show();
 						}else{					
 							var resultArray = result.split('<SYNCDATA>');			
 							if (resultArray[0]=='FAILED'){						
 								$("#error_doctor_list").html(resultArray[1]);
 								$("#wait_image_doctor_list").hide();
-							
+								$("#doctor_cmb_id_lv").show();
 							}else if (resultArray[0]=='SUCCESS'){
 									
 								var chamber_string=resultArray[1];
@@ -343,9 +392,14 @@ function doctor_chamber(){
 									var chamberID=chamberListArray[0];
 									var chamberName=chamberListArray[1];
 									var chamberArea=chamberListArray[2];
-									var chamberThana=chamberListArray[3];
+									var chamberDistrict=chamberListArray[3];
+									var chamberAreaDistrict=chamberArea+'-'+chamberDistrict;
 									if (chamberID!=''){
-										chamber_cmb_list+='<li style="border-bottom-style:solid; border-color:#CBE4E4; border-bottom-width:thin"><label style="background:#81C0C0;"><input type="radio" name="RadioChamber"  value="'+chamberID+'" id="radio_'+chamberID+'">'+chamberID+'-'+chamberName+'</label><p>'+chamberName+', '+chamberArea+', '+chamberThana+'</p></li>';
+										if(areaDistrictName==chamberAreaDistrict){
+											chamber_cmb_list+='<li style="border-bottom-style:solid; border-color:#CBE4E4; border-bottom-width:thin"><label style="background:#81C0C0;"><input type="radio" name="RadioChamber" value="'+chamberID+'" id="radio_'+chamberID+'" checked>'+chamberID+'-'+chamberName+'</label><p ><table ><tr ><td style="width:100%">'+chamberArea+', '+chamberDistrict+'</td><td><a  data-role="button" style="width:30px;" href="#" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-top ui-icon-bars ui-btn-icon-notext" onClick="chamberDetails(\''+chamberID+'-'+chamberName+'\')"></a></td></tr></table></p></li>';										
+										}else{
+											chamber_cmb_list+='<li style="border-bottom-style:solid; border-color:#CBE4E4; border-bottom-width:thin"><label style="background:#81C0C0;"><input type="radio" name="RadioChamber" value="'+chamberID+'" id="radio_'+chamberID+'">'+chamberID+'-'+chamberName+'</label><p ><table ><tr ><td style="width:100%">'+chamberArea+', '+chamberDistrict+'</td><td><a data-role="button" style="width:30px;" href="#" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-top ui-icon-bars ui-btn-icon-notext" onClick="chamberDetails(\''+chamberID+'-'+chamberName+'\')"></a></td></tr></table></p></li>';
+										}
 									}
 								}
 								chamber_cmb_list+='</ul>'
@@ -353,9 +407,10 @@ function doctor_chamber(){
 								//-----------------
 								$("#error_doctor_list").text("");
 								$("#wait_image_doctor_list").hide();
+								$("#doctor_cmb_id_lv").show();
 								
-								$(".doctor_name_show").text(doctorName);
-								$(".doctor_id_show").text(doctorId);
+								$(".doctor_name_show").text(doctorName+'-'+doctorId);
+								//$(".doctor_id_show").text(doctorId);
 								
 								//-------------
 								
@@ -367,22 +422,25 @@ function doctor_chamber(){
 								//chamber_cmb_ob.empty()
 								//chamber_cmb_ob.append(chamber_cmb_list);
 								
+								$("#submitButton1").show();
+								$("#submitButton2").show();
 								
 								//--------------------------	
-								var url = "#page_doctor_chamber";
+								url = "#page_doctor_chamber";
 								$.mobile.navigate(url);	
 								//chamber_cmb_ob.listview("refresh");
-								
-								
+																
 							}else{						
 								$("#error_doctor_list").html('Server Error');
 								$("#wait_image_doctor_list").hide();
+								$("#doctor_cmb_id_lv").show();
 								}
 						}
 					  },
 				  error: function(result) {			  
 					  $("#error_doctor_list").html('Invalid Request');
-					  $("#wait_image_doctor_list").hide();	  
+					  $("#wait_image_doctor_list").hide();
+					  $("#doctor_cmb_id_lv").show();
 				  }
 			 });//end ajax
 	}
@@ -390,9 +448,307 @@ function doctor_chamber(){
 }
 
 
-function appointment_submit(){	
+function chamberDetails(chamberIdName){
+	$("#wait_image_doctor_chamber_details").hide();
+	$("#doctor_chamber_details_id").val("");
+	
+	
+	var chamberIdName=chamberIdName
+	
+	var chamberArray=chamberIdName.split('-')
+	var chamberId=chamberArray[0]
+	var chamberName=chamberArray[1]
+	
+	var areaDistrictName=$("#doctor_area_district").val();
+	
+	var doctorNameID=$("#doctor_cmb_id").val();
+	if (doctorNameID==''){		
+		$("#error_chamber_list").text("Select Doctor");
+	}else{	
+			$("#chamber_cmb_id_div").hide();			
+			$("#error_chamber_list").text("");
+			$("#wait_image_doctor_chamber").show();
+			
+			$("#submitButton1").hide();
+	
+			var doctorArray=doctorNameID.split('-')
+			var doctorName=doctorArray[0]
+			var doctorId=doctorArray[1]
+			
+			//alert(apipath+'get_chamber_details?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&doctorId='+doctorId+'&chamberId='+chamberId)
+			// ajax-------
+			$.ajax({
+				 type: 'POST',
+				 url: apipath+'get_chamber_details?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&doctorId='+doctorId+'&chamberId='+chamberId,
+				 success: function(result) {						
+						if (result==''){
+							$("#error_chamber_list").html('Sorry Network not available');							
+							$("#wait_image_doctor_chamber").hide();
+							$("#chamber_cmb_id_div").show();
+							$("#submitButton1").show();
+	
+						}else{
+							var resultArray = result.split('<SYNCDATA>');			
+							if (resultArray[0]=='FAILED'){						
+								$("#error_doctor_list").html(resultArray[1]);
+								$("#wait_image_doctor_chamber").hide();
+								$("#chamber_cmb_id_div").show();
+								$("#submitButton1").show();
+							}else if (resultArray[0]=='SUCCESS'){
+									
+								var chamber_string=resultArray[1];
+																
+								//----------------
+								
+								//alert(chamberListLength)
+								var chamber_cmb_list='<ul id="chamber_cmb_id_lv_details" data-role="listview" data-filter="false" data-inset="true">'			
+								
+								var chamberListArray = chamber_string.split('<fd>');
+								var chamberID=chamberListArray[0];
+								var chamberName=chamberListArray[1];
+								var chambersAddress=chamberListArray[2];
+								var chambersDay=chamberListArray[3];
+								
+								if (chamberID!=''){	
+									var chambersDaySchedule='<table border="1" width="100%" class="ui-body-d ui-shadow table-stripe ui-responsive" data-role="table" data-theme="d"  data-mode="display:none" style="cell-spacing:1px; width:100%; border-bottom:solid 1px; border-bottom-color:#4E9A9A; font-size:80%;">'
+									var scheduleArray = chambersDay.split('<rd>');
+									
+									for (var j=0; j < scheduleArray.length; j++){
+										var scheduleStr=scheduleArray[j]
+										
+										var dayTimeArray=scheduleStr.split('<rdrd>');
+										
+										chambersDaySchedule+='<tr style="border-color:#4E9A9A;"><td style="border-color:#4E9A9A;">'+dayTimeArray[0]+'</td><td style="border-color:#4E9A9A;">'+dayTimeArray[1]+'</td></tr>'
+										
+										/*if (chambersDaySchedule==''){
+											chambersDaySchedule=scheduleStr;
+										
+										}else{
+											chambersDaySchedule+='</br>'+scheduleStr;
+											}*/																					
+									}
+									chambersDaySchedule+='</table>'
+											
+									chamber_cmb_list+='<li style="border-bottom-style:solid;border-color:#CBE4E4;border-bottom-width:thin;"><a data-role="button" >'+chamberID+'-'+chamberName+'</a></li><p style="font-size:13px; margin-top:0px; padding-top:0px; background-color:#A4D6EE;">'+chambersAddress+'</p><p style="font-size:15px; margin-top:0px; padding-top:0px; background-color:#A4D6EE;">'+chambersDaySchedule+'</p>';
+								}
+								
+								chamber_cmb_list+='</ul>'
+								
+								//-----------------
+								$("#error_chamber_list").text("");
+								$("#wait_image_doctor_chamber").hide();
+								$("#chamber_cmb_id_div").show();
+								
+								$("#doctor_chamber_details_id").val(chamberID);
+								
+								//$(".doctor_name_show").text(doctorName+'-'+doctorId);
+								//$(".doctor_id_show").text(doctorId);
+								
+								//-------------
+								
+								$("#chamber_cmb_id_div_chamber_details").empty();								
+								$("#chamber_cmb_id_div_chamber_details").append(chamber_cmb_list).trigger('create');
+								
+								//---	
+								//var chamber_cmb_ob=$('#chamber_cmb_id_lv');
+								//chamber_cmb_ob.empty()
+								//chamber_cmb_ob.append(chamber_cmb_list);
+								
+								$("#submitButton1").show();
+								$("#submitButton2").show();
+								//--------------------------	
+								url = "#page_chamber_details";
+								$.mobile.navigate(url);	
+								//chamber_cmb_ob.listview("refresh");
+																
+							}else{						
+								$("#error_chamber_list").html('Server Error');
+								$("#wait_image_doctor_chamber").hide();
+								$("#chamber_cmb_id_div").show();
+								$("#submitButton1").show();
+								}
+						}
+					  },
+				  error: function(result) {			  
+					  $("#error_chamber_list").html('Invalid Request');
+					  $("#wait_image_doctor_chamber").hide();
+					  $("#chamber_cmb_id_div").show();
+					  $("#submitButton1").show();
+				  }
+			 });//end ajax
+	}
+	
+}
+
+function appointment_submit(submitFrom){	
+
+	var submitFrom=submitFrom;
+	
 	$("#error_chamber_list").text("");
 	$("#wait_image_doctor_chamber").hide();
+	
+	$("#error_chamber_details").text("");
+	$("#wait_image_doctor_chamber_details").hide();
+	
+	
+	var doctorNameID=$("#doctor_cmb_id").val();
+	
+	if (doctorNameID==''){		
+		$("#error_chamber_list").text("Select Doctor");
+	}else{
+		var chamberId=''
+		if (submitFrom=='MAIN'){		
+			chamberId=($("input:radio[name='RadioChamber']:checked").val())
+		}else{
+			chamberId=$("#doctor_chamber_details_id").val();
+		}
+		
+		if (chamberId=="" || chamberId==undefined){
+			$("#error_chamber_list").html("Chamber Required");
+			$("#error_chamber_details").html("Chamber Required");			
+		}else{
+			
+			var appointmentDate=''
+			if (submitFrom=='MAIN'){		
+				appointmentDate=$("#appointment_date").val();
+			}else{
+				appointmentDate=$("#appointment_date_chamber_details").val();
+			}
+			
+			var now = new Date();
+			var month=now.getUTCMonth()+1;
+			if (month<10){
+				month="0"+month
+				}
+			var day=now.getUTCDate();
+			if (day<10){
+				day="0"+day
+				}
+				
+			var year=now.getUTCFullYear();
+			
+			var currentDay = new Date(year+ "-" + month + "-" + day);	
+			var appointment_date = new Date(appointmentDate);
+			
+			if (appointment_date=='Invalid Date'){		
+				$("#error_chamber_list").text("Select a date");
+				$("#error_chamber_details").html("Select a date");			
+				
+			}else{
+				if (appointment_date<currentDay){
+					$("#error_chamber_list").text("Previous date not allowed");
+					$("#error_chamber_details").html("Previous date not allowed");
+				}else{	
+					
+					$("#wait_image_doctor_chamber").show();
+					$("#wait_image_doctor_chamber_details").show();
+					
+					$("#submitButton1").hide();
+					$("#submitButton2").hide();
+					
+					
+					var doctorArray=doctorNameID.split('-')
+					var doctorName=doctorArray[0]
+					var doctorId=doctorArray[1]
+					
+					//alert(apipath+'submit_appointment?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&doctorId='+doctorId+'&chamberId='+chamberId+'&appointmentDate='+appointmentDate)
+										
+					// ajax-------
+					$.ajax({
+						 type: 'POST',
+						 url: apipath+'submit_appointment?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&doctorId='+doctorId+'&chamberId='+chamberId+'&appointmentDate='+appointmentDate,
+						 success: function(result) {						
+								//alert (result)
+								if (result==''){
+									$("#error_chamber_list").html('Sorry Network not available');							
+									$("#wait_image_doctor_chamber").hide();
+									
+									$("#error_chamber_details").html('Sorry Network not available');							
+									$("#wait_image_doctor_chamber_details").hide();
+									
+									$("#submitButton1").show();
+							  		$("#submitButton2").show();
+									
+								}else{
+									var resultArray = result.split('.');	
+									var result_string=""		
+									if (resultArray[0]=='STARTFailed'){						
+										
+										result_string=result.replace("STARTFailed.","")	
+										
+										$("#error_chamber_list").html(result_string);
+										$("#wait_image_doctor_chamber").hide();
+										
+										$("#error_chamber_details").html(result_string);							
+										$("#wait_image_doctor_chamber_details").hide();
+										
+										$("#submitButton1").show();
+							  			$("#submitButton2").show();
+							  
+									}else if (resultArray[0]=='STARTSuccess'){
+										
+										//var result_string=resultArray[1];
+											
+										result_string=result.replace("STARTSuccess.","")										
+										//-----------------
+										//$("#error_chamber_list").text(result_string);
+										$("#wait_image_doctor_chamber").hide();
+										
+										//$("#error_chamber_details").html(result_string);							
+										$("#wait_image_doctor_chamber_details").hide();
+									
+										$("#success_message").html('</br></br>'+result_string);
+										
+										//--------------------------	
+										
+										/*if (submitFrom=='MAIN'){		
+											url = "#page_doctor_chamber";
+										}else{
+											url = "#page_chamber_details";
+										}*/
+										$("#submitButton1").show();
+										$("#submitButton2").show();
+	
+										url = "#page_success";
+										
+										$.mobile.navigate(url);	
+										
+									}else{						
+										$("#error_chamber_list").html('Server Error');
+										$("#wait_image_doctor_chamber").hide();
+										
+										$("#error_chamber_details").html('Server Error');							
+										$("#wait_image_doctor_chamber_details").hide();
+										
+										$("#submitButton1").show();
+							  			$("#submitButton2").show();
+							  			
+										}
+								}
+							  },
+						  error: function(result) {			  
+							  $("#error_chamber_list").html('Invalid Request');
+							  $("#wait_image_doctor_chamber").hide();
+							  
+							  $("#error_chamber_details").html('Invalid Request');							
+							  $("#wait_image_doctor_chamber_details").hide();
+							  
+							  $("#submitButton1").show();
+							  $("#submitButton2").show();
+										  
+						  }
+					 });//end ajax
+				}
+			}
+		}
+	}
+}
+
+/*
+function appointment_submit_details(){	
+	$("#error_chamber_list").text("");
+	$("#wait_image_doctor_chamber").hide();
+	
 	
 	var doctorNameID=$("#doctor_cmb_id").val();
 	
@@ -400,7 +756,7 @@ function appointment_submit(){
 		$("#error_chamber_list").text("Select Doctor");
 	}else{
 		var chamberId=($("input:radio[name='RadioChamber']:checked").val())
-	
+		
 		if (chamberId=="" || chamberId==undefined){
 			$("#error_chamber_list").html("Chamber Required");
 		}else{
@@ -459,7 +815,7 @@ function appointment_submit(){
 										$("#wait_image_doctor_chamber").hide();
 										
 										//--------------------------	
-										var url = "#page_doctor_chamber";
+										url = "#page_doctor_chamber";
 										$.mobile.navigate(url);	
 										
 									}else{						
@@ -477,59 +833,43 @@ function appointment_submit(){
 			}
 		}
 	}
-}
+}*/
+
 
 function get_profile(){
 	$("#error_home_page").html("")
 	$("#error_profile_edit").html("")	
 	$("#wait_image_profile").hide();	 
+	$("#btn_profile_update").show();
 	
 	var patientID=localStorage.user_id
-	if (patientID==''||patientID==undefined){
-		$("#error_home_page").html("Required Sync")
+	var patient_mobile=localStorage.user_mobile
+	var patient_name=localStorage.user_name
+	var patient_address=localStorage.user_address
+	
+	if (patientID==''||patientID==undefined || patient_mobile=='' || patient_mobile==undefined || patient_name=='' || patient_name==undefined){
+		$("#error_home_page").html("Required Registration")
 	}else{
 		
 		$("#patient_id").val(patientID);
+		$("#patient_mobile").val(patient_mobile);		
+		$("#patient_name").val(patient_name);
 		
-		//alert(apipath+'get_patient_profile?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code)							
-		$.ajax({
-			 type: 'POST',
-			 url: apipath+'get_patient_profile?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code,
-			 success: function(result) {						
-					if (result==''){
-						$("#error_home_page").html('Sorry Network not available');
-					}else{
-						var resultArray = result.split('<SYNCDATA>');			
-						if (resultArray[0]=='FAILED'){						
-							$("#error_home_page").html(resultArray[1]);
-						
-						}else if (resultArray[0]=='SUCCESS'){
-							
-							var result_string=resultArray[1];
-							var patatientArray = result_string.split('<fd>');
-							$("#patient_name").val(patatientArray[0]);
-							$("#patient_mobile").val(patatientArray[1]);
-							$("#patient_address").val(patatientArray[2]);
-							
-							//--------------------------	
-							var url = "#page_profile";
-							$.mobile.navigate(url);	
-							
-						}else{						
-							$("#error_home_page").html('Server Error');
-							}
-					}
-				  },
-			  error: function(result) {			  
-				  $("#error_home_page").html('Invalid Request');  
-			  }
-			  });//end ajax
+		$("#patient_address").val(patient_address);
+		
+		
+		//--------------------------	
+		url = "#page_profile";
+		$.mobile.navigate(url);	
+				
+			  
 	
 	}
 }
 
 function profile_edit(){	
-	$("#error_profile_edit").html("")	
+	$("#error_profile_edit").html("")
+		
 	$("#wait_image_profile").hide();
 	$("#btn_profile_update").show();
 	
@@ -537,7 +877,9 @@ function profile_edit(){
 	if (patientID==''||patientID==undefined){
 		$("#error_profile_edit").html("Required Sync")
 	}else{
+		
 		$("#wait_image_profile").show();
+		$("#btn_profile_update").hide();
 		
 		var patient_name=$("#patient_name").val();
 		var patient_mobile=$("#patient_mobile").val();
@@ -555,6 +897,7 @@ function profile_edit(){
 						if (result==''){
 							$("#error_profile_edit").html('Sorry Network not available');
 							$("#wait_image_profile").hide();
+							
 						}else{
 							var resultArray = result.split('<SYNCDATA>');			
 							if (resultArray[0]=='FAILED'){						
@@ -569,7 +912,7 @@ function profile_edit(){
 								//$("#btn_profile_update").hide();
 								
 								//--------------------------
-								var url = "#page_profile";
+								url = "#page_profile";
 								$.mobile.navigate(url);	
 								
 							}else{						
