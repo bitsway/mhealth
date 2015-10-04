@@ -11,14 +11,13 @@
 		<link rel="stylesheet" href="static/jquery.mobile-1.4.0.min.css" />
         <script src="static/jquery-1.10.2.min.js"></script>
         <script src="static/jquery.mobile-1.4.0.min.js"></script>
-		<script src="static/smart_doctor.js"></script>		
-		
-	<style>
-	table.tbl_preview tr td { border:1px solid #5FAFAF; background-color:#EFF8F8;}
-	.ui-radio{ width:100%;}
-	.ui-controlgroup-controls{ width:100%;}
-	.ui-controlgroup-vertical{ width:200%;}
+		<script src="static/smart_doctor.js"></script>
 	
+	<style>
+		table.tbl_preview tr td { border:1px solid #5FAFAF; background-color:#EFF8F8;}
+		.ui-radio{ width:100%;}
+		.ui-controlgroup-controls{ width:100%;}
+		.ui-controlgroup-vertical{ width:200%;}
 	</style>
     
 	<script type="text/javascript">
@@ -38,7 +37,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
             </div>
 			
             <div data-role="content">
-            	<div id="error_login" style="color:#C00"></div>                
+            	<div id="error_login" style="color:#B70000"></div>                
                    <!-- <form>
                     	Member ID:		
                         <input name="user_id" id="user_id"  value="" type="number" placeholder="">
@@ -125,7 +124,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
             	<table>
                 	<tr><td><a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-search" onClick="search_page();" style="font-size:13px;">Search</a></td><td><a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-user" onClick="get_profile();" style="font-size:13px;">Profile</a></td><td><!--<a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-clock" style="font-size:13px;">Saved App</a>--></td></tr>
                 </table>
-                <div id="error_home_page" style="color:#C00"></div>
+                <div id="error_home_page" style="color:#B70000"></div>
                 
                 <div data-role="fieldcontain" style="font-size:20px;">                	
                     <div class="ui-grid-b">
@@ -168,7 +167,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
     </div>
     
     <div data-role="content" >
-        <div id="error_search_list" style="color:#C00">&nbsp;</div>	
+        <div id="error_search_list" style="color:#B70000">&nbsp;</div>	
         
         <select name="doctor_specialty" id="doctor_specialty_cmb_id" data-native-menu="false">
         </select>
@@ -177,7 +176,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
             <input id="doctor_location_cmb_id" data-type="search" placeholder="Search location..">
         </form>
         
-        <ul id="doctor_location_cmb_id_lv" data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="true" data-input="#doctor_location_cmb_id">
+        <ul id="doctor_location_cmb_id_lv" data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="false" data-input="#doctor_location_cmb_id">
         </ul>
         
         <br>
@@ -186,7 +185,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
         
     </div><!--/cont-->
     
-    <div data-theme="c" data-role="footer" data-position="fixed"></div>			
+    <div data-theme="c" data-role="footer" data-position="fixed" style="text-align:center"><a data-role="button" style="width:70%" id="btn_sync_location" onClick="sync_location();" >Search for more location</a></div>			
  </div><!--/page-->
 
 
@@ -203,7 +202,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
     
     
     <div data-role="content" style="padding-top:0px; ">
-        <div id="error_doctor_list" style="color:#C00"></div>
+        <div id="error_doctor_list" style="color:#B70000"></div>
         
         <ul data-role="listview" data-inset="true" >					
             <li style="background-color:#F2F2F2;">
@@ -262,7 +261,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
         <input type="date" id="appointment_date" name="appointment_date" value="" placeholder="Select Appointment Date">
         </p>
         
-        <div id="error_chamber_list" style="color:#C00"></div>
+        <div id="error_chamber_list" style="color:#B70000"></div>
         
         <div align="center"><img id="wait_image_doctor_chamber" style="" width="50px;" src="loading.gif" alt=""></div>
         
@@ -302,13 +301,13 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
         <input type="date" id="appointment_date_chamber_details" name="appointment_date_chamber_details" value="" placeholder="Select Appointment Date">
         </p>
         
-        <div id="error_chamber_details" style="color:#C00"></div>
+        <div id="error_chamber_details" style="color:#B70000"></div>
         
         <div align="center"><img id="wait_image_doctor_chamber_details" style="" width="50px;" src="loading.gif" alt=""></div>
         
     </div><!--/cont-->
     
-    <div data-theme="c" data-role="footer" data-position="fixed" style="text-align:center"><a data-role="button" style="width:70%" id="submitButton2" onClick="appointment_submit('DETAILS');" >Request Appointment</a></div><br>
+    <div data-theme="c" data-role="footer" data-position="fixed" style="text-align:center"><a data-role="button" style="width:70%" id="submitButton2" onClick="appointment_submit('DETAILS');" >Request Appointment</a></div>
 
  </div><!--/page-->
 
@@ -387,7 +386,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 	
          <a data-role="button" onClick="profile_edit();" id="btn_profile_update">Update Profile</a>
          
-    	<div id="error_profile_edit" style="color:#C00"></div>        
+    	<div id="error_profile_edit" style="color:#B70000"></div>        
         <div align="center"><img id="wait_image_profile" style="" width="50px;" src="loading.gif" alt=""></div>
         
     </div><!--/cont-->
