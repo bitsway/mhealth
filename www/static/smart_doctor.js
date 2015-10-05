@@ -78,6 +78,7 @@ $(document).ready(function(){
 	});
 
 function get_login() {
+	$("#error_login").html("");
 	url = "#login";
 	$.mobile.navigate(url);
 	}
@@ -857,10 +858,10 @@ function appointment_submit(submitFrom){
 								}
 							  },
 						  error: function(result) {			  
-							  $("#error_chamber_list").html('Invalid Request');
+							  $("#error_chamber_list").html('Chamber Settings is Incomplte. Please Try Latter.');
 							  $("#wait_image_doctor_chamber").hide();
 							  
-							  $("#error_chamber_details").html('Invalid Request');							
+							  $("#error_chamber_details").html('Chamber Settings is Incomplte. Please Try Latter.');							
 							  $("#wait_image_doctor_chamber_details").hide();
 							  
 							  $("#submitButton1").show();
