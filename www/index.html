@@ -5,7 +5,7 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>SmartDoctor</title>
-		<link rel="stylesheet" href="static/c.min.css" />
+		<link rel="stylesheet" href="static/smartTheme.min.css" />
 		<link rel="stylesheet" href="static/jquery.mobile.icons.min.css" />
 		
 		<link rel="stylesheet" href="static/jquery.mobile-1.4.0.min.css" />
@@ -15,168 +15,167 @@
 	
 	<style>
 		table.tbl_preview tr td { border:1px solid #5FAFAF; background-color:#EFF8F8;}
-		.ui-radio{ width:100%;}
+		.ui-radio{ width:100%; text-shadow:none;}
 		.ui-controlgroup-controls{ width:100%;}
 		.ui-controlgroup-vertical{ width:200%;}
+		a{text-shadow:none;}
+		#homeMenuDiv div { padding:2px;}
+		#homeMenuDiv img:hover{ box-shadow:0px 0px 5px;}
+		
+		#pageHome ul li{ margin:2px 0px;}
+		#pageHome ul li:hover{ background-color:#F2F8FD; cursor:pointer; box-shadow:0px 0px 5px;}
+		
+		#page_search ul li{ margin:2px 0px;}
+		#page_search ul li:hover{ background-color:#F2F8FD; cursor:pointer; box-shadow:0px 0px 5px;}
+		
+		#page_doctor ul li{ background-color:#F2F8FD;}
+		#page_doctor ul li:hover{ cursor:pointer; box-shadow:0px 0px 5px;}
+		/*.ui-input-search{ width:90%; vertical-align:top; margin-left:15px;}*/
 	</style>
     
 	<script type="text/javascript">
-function MM_jumpMenu(targ,selObj,restore){ //v3.0
-  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
-  if (restore) selObj.selectedIndex=0;
-}
+		function MM_jumpMenu(targ,selObj,restore){ //v3.0
+		  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+		  if (restore) selObj.selectedIndex=0;
+		}
     </script>
     </head>
 	
     <body>
 		 <!--===================== pageSync ==================-->
-		<div data-theme="c" data-role="page" id="login">
-            <div data-theme="c" data-role="header" data-position="fixed">				
-				<a  data-role="button" href="#pageHome" class="ui-btn-left ui-btn-icon-notext"><img src="menu.png"></a>
-                <h3>Registration</h3>
+		<div data-theme="d" data-role="page" id="login">
+            <div data-theme="d" data-role="header" data-position="fixed">
+            	<a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-inline ui-icon-search" onClick="menuClick();" ></a>
+                <h3>রেজীষ্ট্রেশন</h3>
             </div>
 			
             <div data-role="content">
             	<div id="error_login" style="color:#B70000"></div>                
-                   <!-- <form>
-                    	Member ID:		
-                        <input name="user_id" id="user_id"  value="" type="number" placeholder="">
-                        PIN:
-                        <input type="number" name="user_pass" id="user_pass"  value="" placeholder="">
-                        Name:
-                        <input type="text" name="user_name" id="user_name"  value="" placeholder="">
-                        Address:
-                        <input type="text" name="user_address" id="user_address"  value="" placeholder="">
-                    </form>-->						
+            			
 				<table  border="0" class="ui-body-d ui-shadow table-stripe ui-responsive" data-role="table" data-theme="d"  data-mode="display:none" style="cell-spacing:0px; width:100%; font-size:98%;">
                     <tr >
-                      <td style="width:30%;" ><strong style="font-size:15px; color:#008040">Member ID</strong></td>
-                      <td style="width:70%;" ><input id="user_id" name="user_id" type="number"  value="" ></td>              
+                      <td style="width:30%;" ><strong style="font-size:15px;">Mobile No</strong></td>
+                      <td style="width:70%;" ><input id="mobile_no" name="mobile_no" type="number"  value="" maxlength="13" ></td>              
                     </tr>
                     <tr >
-                      <td style="width:30%;" ><strong style="font-size:15px; color:#008040">PIN</strong></td>
-                      <td style="width:70%;" ><input  id="user_pass" name="user_pass"  type="number"  value="" ></td>              
+                      <td style="width:30%;" ><strong style="font-size:15px;">PIN</strong></td>
+                      <td style="width:70%;" ><input  id="user_pass" name="user_pass"  type="number"  value="" maxlength="4" ></td>              
                     </tr>
                     
                     <tr >
-                      <td style="width:30%;" ><strong style="font-size:15px; color:#008040">Name</strong></td>
-                      <td style="width:70%;" ><input id="user_name" name="user_name" type="text" value="" ></td>              
-                    </tr>
-                    
-                    <tr >
-                      <td style="width:30%;" ><strong style="font-size:15px; color:#008040">Address</strong></td>
-                      <td style="width:70%;" ><input  id="user_address" name="user_address"  type="text" value="" ></td>              
-                    </tr>
+                      <td style="width:30%;" ><strong style="font-size:15px;">Name</strong></td>
+                      <td style="width:70%;" ><input id="user_name" name="user_name" type="text" value="" maxlength="50" ></td>              
+                    </tr>                  
                  </table>
                 <br><br>
                 
-				<a data-role="button" id="loginButton" onClick="check_user();" >Registration</a>
+				<a data-role="button" id="loginButton" onClick="check_user();" >রেজীষ্ট্রেশন</a>
 				<div align="center"><img id="wait_image_login" style="" width="50px;" src="loading.gif" alt=""></div>
                                 
                 <br>
-                For PIN Code: Send SMS <strong>mhealth</strong> to <strong>2765</strong>
-                <br><br><br><br><br><br><br><br>
+                PIN কোডের জন্য SMS করূন <strong>M</strong> লিখে <strong>2765</strong> নম্বরে। <br><br><br><br><br><br><br><br>
                         
                 <br><br><br><br><br><br>
                        
             </div>
 			
         <!-- ==========footer====== -->	
-        <div data-theme="c" data-role="footer" data-position="fixed"></div>
+        <div data-theme="d" data-role="footer" data-position="fixed"></div>
         
         </div>		
 
 
 
-<!-- =====================Home page=============== -->
-		<div data-theme="c" data-role="page" id="pageHome">
-			<div data-role="panel" id="routePanel" data-display="overlay" style="width:60%; background-color:#FFF">
-				<!-- panel content goes here unilogo1.jpg-->
-				<div align="center">
-                <!--<img style="width:100%" src="lafarge.png" alt="GP" />-->
-                <br>
-				</div>
-                
-				<br><br><br><br>
-                
-				<ul data-role="listview">                    
-                    <br><br>
-                    <div style="background:#008A8A; height:1px"></div>
-                    <li ><div ><a  onClick="get_login()" ><img src="sync.png"></a></div></li> 
-                    <div style="background:#008A8A; height:1px"></div>
-                </ul>
-                
-				<div style="margin:100%;"></div>
-				<!--<img src="lafarge.png" alt="Grameen Phone" />-->
-			</div><!-- /panel -->
-			
-            <div data-theme="c" data-role="header" data-position="fixed" >			
-				<a  data-role="button" href="#routePanel" class="ui-btn-left ui-btn-icon-notext"><img src="menu.png"></a>
-                <a  data-role="button" onClick="exit();" class="ui-btn-right" style="padding:4px;"><img src="exit.png" style="height:25px; width:25px;"></a>
-                <h3>Smart Doctor</h3>                
-                <!--<table>
-                	<tr><td><a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-search">Search</a></td><td><a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-user">Profile</a></td><td><a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-plus">App</a></td></tr>
-                </table>-->
+<!-- =====================Home page=============== --> 
+		<div data-theme="d" data-role="page" id="pageHome" style="overflow:scroll;">
+						
+            <div data-theme="d"  data-role="header" data-position="fixed" style="height:40px;" >
+            	<div class="ui-nodisc-icon">
+                    &nbsp;&nbsp;&nbsp;<a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-inline ui-icon-user" onClick="get_profile();" ></a>
+                    <a id="btn_reg" class="ui-btn ui-shadow ui-btn-right ui-corner-all ui-btn-inline " onClick="get_login();" >রেজীষ্ট্রেশন</a><span style="float:right; width:50%; text-align:right; text-shadow:none; margin:5px 10px 0px 0px; font-size:20px;" id="h_user_name"></span>
+            	</div>
             </div>
                         
-			<!--<img style="width:100%; height:40px"  src="images_2.jpg">-->
-            <div data-role="content" style="margin-top:0px; padding-top:0px">      
-            	<table>
-                	<tr><td><a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-search" onClick="search_page();" style="font-size:13px;">Search</a></td><td><a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-user" onClick="get_profile();" style="font-size:13px;">Profile</a></td><td><!--<a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-clock" style="font-size:13px;">Saved App</a>--></td></tr>
-                </table>
-                <div id="error_home_page" style="color:#B70000"></div>
-                
-                <div data-role="fieldcontain" style="font-size:20px;">                	
+			
+            <div data-role="content" style="margin-top:0px; padding-top:0px">            	
+                <div id="error_home_page" style="color:#B70000"></div>               
+                <ul id="patient_doctor_cmb_id_lv" data-role="listview" data-inset="true">
+                </ul>
+                <br/>
+                           
+                <div data-role="fieldcontain" style="font-size:20px;" id="homeMenuDiv">                	
                     <div class="ui-grid-b">
-                        <div class="ui-block-a" ><a onClick="search_page('Medicine');" ><img src="med.png"></a></div><!--<img src="med.png">-->
-                        <div class="ui-block-b"><a onClick="search_page('Cardiology');"><img src="card.png"></a></div>
+                        <div class="ui-block-a" ><a onClick="search_page('Medicine');" ><img src="med.png" ></a></div><!--<img src="med.png">-->
+                        <div class="ui-block-b"><a onClick="search_page('Cardiology');"><img src="Heart.png"></a></div>
                         <div class="ui-block-c" ><a onClick="search_page('Dental');"><img src="dental.png"></a></div>
                     </div>                    
                     <div class="ui-grid-b">
                         <div class="ui-block-a"><a onClick="search_page('Skin');" ><img src="skin.png"></a></div>
-                        <div class="ui-block-b" ><a onClick="search_page('Gastrology');" ><img src="gast.png"></a></div>
-                        <div class="ui-block-c"><a onClick="search_page('Neurology');" ><img src="neuro.png"></a></div>
+                        <div class="ui-block-b" ><a onClick="search_page('Gastrology');" ><img src="Gastrology.png"></a></div>
+                        <div class="ui-block-c"><a onClick="search_page('Neurology');" ><img src="neorology.png"></a></div>
                     </div>
                                         
                      <div class="ui-grid-b">
-                        <div class="ui-block-a"><a onClick="search_page('Orthopedic');"><img src="ortho.png"></a></div>
+                        <div class="ui-block-a"><a onClick="search_page('Orthopedic');"><img src="orthopadic.png"></a></div>
                         <div class="ui-block-b"><a onClick="search_page('Eye');" ><img src="eye.png"></a></div>          
-                        <div class="ui-block-c"><a onClick="search_page('Gwynne');" ><img src="gwynne.png"></a></div>     
+                        <div class="ui-block-c"><a onClick="search_page('Gwynne');" ><img src="gynee.png"></a></div>     
                     </div>
-                      
-                      <div class="ui-grid-b">
+                    <br/> 
+                                   
+                      <ul data-role="listview" data-inset="false" >
+                        <li onClick="search_page('Medicine');">মেডিসিন</li>                      
+                        <li onClick="search_page('Cardiology');">হার্ট এ্যটার্ক</li>
+                        <li onClick="search_page('Dental');">দাঁত</li>
+                        <li onClick="search_page('Skin');">চর্ম রোগ</li>
+                        <li onClick="search_page('Gastrology');">পেটের সমস্যা</li>
+                        <li onClick="search_page('Neurology');">নিউরোলজি</li>
+                        <li onClick="search_page('Orthopedic');">হাড় ভাঙা</li>
+                        <li onClick="search_page('Eye');" >চোখের সমস্যা</li>
+                        <li onClick="search_page('Gwynne');" >গাইনি</li>
+                        <li onClick="search_page('Gwynne');">মা ও শিশু</li>
+                        <li onClick="search_page('Gwynne');">শিশু রোগ বিশ্বেষজ্ঞ (pediatrician)</li>
+                        <li onClick="search_page('Medicine');">ডায়বেটিকস</li>
+                        <li onClick="search_page('Neurology');">মাথা ব্যাথা</li>
+                        <li onClick="search_page('Neurology');">নাক কান গলা (ENT )</li>
+                        <li onClick="search_page('Orthopedic');">ফিজিওথেরাপিষ্ট (physiotherapist )</li>
+                        <!--<li onClick="search_page();">অন্যান্য</li>-->                  
+                    </ul>
+                     <br/>   
+                     <!-- <div class="ui-grid-b">
                         <div class="ui-block-a"><a onClick="search_page();"><img src="more.png"></a></div>     
-                    </div>    
+                    </div>   --> 
                 </div>
                  
              </div>	
              
-             <div data-theme="c" data-role="footer" data-position="fixed"></div>
+             <div data-theme="d" data-role="footer" data-position="fixed"></div>
              			
       </div>
 
 
 <!--==================Chamber====================-->
-<div data-theme="c" data-role="page" id="page_search">
-    <div data-theme="c" data-role="header" data-position="fixed">
-    <a  data-role="button" href="#pageHome" class="ui-btn-left ui-btn-icon-notext"><img src="menu.png"></a>
-    <!--<a  data-role="button" href="#pageHome" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-home">&nbsp;</a>-->
-    <!--<a data-role="button" data-rel="back"  data-icon="arrow-l" data-iconpos="left" class="ui-btn-right">Back</a>-->
-     <a data-role="button" data-rel="back"  data-iconpos="left" class="ui-btn-right"><img src="back.png"></a>
-     <h2>Search</h2>
+<div data-theme="d" data-role="page" id="page_search">
+    <div data-theme="d" data-role="header" data-position="fixed">
+     <a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-inline ui-icon-search" onClick="menuClick();" ></a>
+   
+     <a data-role="button" onClick="goBackPage();" class="ui-btn-right"><img src="back.png"></a>
+     <h2 style="text-shadow:none;">Search</h2>
     </div>
     
-    <div data-role="content" style="padding-top:0px; height:90%">
-        <div id="error_search_list" style="color:#B70000">&nbsp;</div>	
+    <div data-role="content" >
+        <div id="error_search_list" style="color:#B70000">&nbsp;</div><br/><br/>
+         <ul data-role="listview" data-inset="false" >					
+            <li style="background-color:#F2F2F2;">
+                <div >Specialty:&nbsp;<span class="specialty_show" style="font-weight:bold"></span></div>                
+            </li>
+        </ul>
+        <br/>
+        <!--<select name="doctor_specialty" id="doctor_specialty_cmb_id" data-native-menu="false">
+        </select>-->
         
-        <select name="doctor_specialty" id="doctor_specialty_cmb_id" data-native-menu="false">
-        </select>
-                
-        <form class="ui-filterable">
-            <input id="doctor_location_cmb_id" data-type="search" placeholder="Search location..">
-        </form>
-        
-        <ul id="doctor_location_cmb_id_lv" data-role="listview" data-inset="true" data-filter="true" data-filter-reveal="false" data-input="#doctor_location_cmb_id">
+        <input id="doctor_location_cmb_id" data-type="search"  placeholder="Search location..">
+        <br/>
+        <ul id="doctor_location_cmb_id_lv" data-role="listview" data-inset="false" data-filter="true" data-filter-reveal="false" data-input="#doctor_location_cmb_id">
         </ul>
         
         <br>
@@ -185,35 +184,32 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
         
     </div><!--/cont-->
     
-    <div data-theme="c" data-role="footer" data-position="fixed" style="text-align:center"><a data-role="button" style="width:70%" id="btn_sync_location" onClick="sync_location();" >Search for more location</a></div>			
+    <div data-theme="d" data-role="footer" data-position="fixed" style="text-align:center"><!--<a data-role="button" style="width:70%" id="btn_sync_location" onClick="sync_location();" >Search for more location</a>--></div>			
  </div><!--/page-->
 
 
 
 <!--==================Doctor List====================-->
-<div data-theme="c" data-role="page" id="page_doctor">
-    <div data-theme="c" data-role="header" data-position="fixed">
-    <a  data-role="button" href="#pageHome" class="ui-btn-left ui-btn-icon-notext"><img src="menu.png"></a>
-    <!--<a  data-role="button" href="#pageHome" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-home">&nbsp;</a>-->
-    <!--<a data-role="button" data-rel="back"  data-icon="arrow-l" data-iconpos="left" class="ui-btn-right">Back</a>-->
-     <a data-role="button" data-rel="back"  data-iconpos="left" class="ui-btn-right"><img src="back.png"></a>
-     <h3>Doctor</h3>
+<div data-theme="d" data-role="page" id="page_doctor">
+    <div data-theme="d" data-role="header" data-position="fixed" style="height:50px;">  
+    <a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-inline ui-icon-search" onClick="menuClick();" ></a>
+    <a data-role="button" onClick="goBackPage();" class="ui-btn-right"><img src="back.png"></a>
+     <!--<h3></h3>-->
     </div>
-    
     
     <div data-role="content" style="padding-top:0px; ">
         <div id="error_doctor_list" style="color:#B70000"></div>
         
-        <ul data-role="listview" data-inset="true" >					
+        <!--<ul data-role="listview" data-inset="true" >					
             <li style="background-color:#F2F2F2;">
                 <div>Specialty:&nbsp;<span class="specialty_show" style="font-weight:bold"></span></div>
                 <div>Location&nbsp;:&nbsp;<span class="district_show"></span></div>
             </li>
-        </ul>
+        </ul>-->
                 
          <!-- List view-------------------->
-        <input id="doctor_cmb_id" data-type="search" placeholder="Search">		        
-        <ul id="doctor_cmb_id_lv" data-role="listview" data-filter="true" data-input="#doctor_cmb_id" data-inset="true">
+        <input id="doctor_cmb_id" data-type="search" placeholder="Area/ Dr. Name/ Specialty ">		        
+        <ul id="doctor_cmb_id_lv" style="border:none; box-shadow:none;" data-role="listview" data-filter="true" data-input="#doctor_cmb_id" data-inset="true">
         </ul>                
         <!-- List ---->
         
@@ -223,32 +219,41 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
         
     </div><!--/cont-->
     
-    <div data-theme="c" data-role="footer" data-position="fixed"></div>			
+    <div data-theme="d" data-role="footer" data-position="fixed"></div>
+    
+    <!-- popup-->
+    <div data-role="popup" id="popupBasic" style="margin-right:20px; box-shadow:none; font-size:10px; width:100px;">
+         <ul data-role="listview" data-inset="false" >
+            <li onClick="get_profile();" >Profile</li>                      
+            <li >Exit</li>
+         </ul>
+    </div>
+    			
  </div><!--/page-->
 
 
 <!--================== ====================-->
-<div data-theme="c" data-role="page" id="page_doctor_chamber">
-    <div data-theme="c" data-role="header" data-position="fixed">    
-    <a  data-role="button" href="#pageHome" class="ui-btn-left ui-btn-icon-notext"><img src="menu.png"></a>
+<div data-theme="d" data-role="page" id="page_doctor_chamber">
+    <div data-theme="d" data-role="header" data-position="fixed">    
+     <a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-inline ui-icon-search" onClick="menuClick();" ></a>
     <!--<a  data-role="button" href="#pageHome" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-home">&nbsp;</a>-->
-    <a data-role="button" data-rel="back"  data-iconpos="left" class="ui-btn-right"><img src="back.png"></a>
+    <a data-role="button" onClick="goBackPage();" class="ui-btn-right"><img src="back.png"></a>
         <h3 >Chamber</h3>
     </div>
     
     
-    <div data-role="content" style="height:90%"  >
-     
-        <ul data-role="listview" data-inset="true">					
+    <div data-role="content" style="padding-top:0px; ">
+        <br/>
+        <ul data-role="listview" data-inset="false">					
             <li style="background-color:#F2F2F2;">
                 <div>Specialty:&nbsp;<span class="specialty_show" style="font-weight:bold"></span></div>
-                <div>Location&nbsp;:&nbsp;<span class="district_show"></span></div>
+                <!--<div>Location&nbsp;:&nbsp;<span class="district_show"></span></div>-->
                 <div>Doctor&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;<span class="doctor_name_show"></span></div>
                 <!--<div>Dr.Code:<span class="doctor_id_show"></span></div>-->
                 <input type="hidden" id="doctor_area_district" name="doctor_area_district" value="">
             </li>
         </ul>
-                
+        <br/> <br/>      
          <!-- List view-------------------->        		        
         <!--<ul id="chamber_cmb_id_lv" data-role="listview" data-filter="false" data-input="#chamber_cmb_id" data-inset="true">
         </ul>-->
@@ -256,8 +261,8 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
         <div id="chamber_cmb_id_div"></div>
          
         <!-- List ---->
-        
-        <p style="border:solid #CBE4E4">Appointment Date:
+        <br/>
+        <p  >Appointment Date:
         <input type="date" id="appointment_date" name="appointment_date" value="" placeholder="Select Appointment Date">
         </p>
         
@@ -265,44 +270,38 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
         
         <div align="center"><img id="wait_image_doctor_chamber" style="" width="50px;" src="loading.gif" alt=""></div>
         
-       
-        
-       
-        </br></br></br></br></br>
-        
         
     </div><!--/cont-->
-     
-    <div data-theme="c" data-role="footer" data-position="fixed" style="text-align:center"><a data-role="button" style="width:70%" id="submitButton1" onClick="appointment_submit('MAIN');" >Request Appointment</a></div>			
+    
+    <div data-theme="d" data-role="footer" data-position="fixed" style="text-align:center"><a data-role="button" style="width:70%" id="submitButton1" onClick="appointment_submit('MAIN');" >Request Appointment</a></div>			
  </div><!--/page-->
 
 <!--================== ====================-->
-<div data-theme="c" data-role="page" id="page_chamber_details">
-    <div data-theme="c" data-role="header" data-position="fixed">   
-    <a  data-role="button" href="#pageHome" class="ui-btn-left ui-btn-icon-notext"><img src="menu.png"></a> 
+<div data-theme="d" data-role="page" id="page_chamber_details">
+    <div data-theme="d" data-role="header" data-position="fixed">   
+    <a  data-role="button" href="#"  onClick="menuClick()" class="ui-btn-left ui-btn-icon-notext"><img src="menu.png"></a> 
     <!--<a  data-role="button" href="#pageHome" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-home">&nbsp;</a>-->
     <a data-role="button" data-rel="back"  data-iconpos="left" class="ui-btn-right"><img src="back.png"></a>
         <h3 >Chamber Details</h3>
     </div>
     
     
-    <div data-role="content" style="padding-top:0px; height:85%">
-        
-        <ul data-role="listview" data-inset="true">					
+    <div data-role="content" style="padding-top:0px; ">
+        <br/>
+        <ul data-role="listview" data-inset="false">					
             <li style="background-color:#F2F2F2;">
                 <div>Specialty:&nbsp;<span class="specialty_show" style="font-weight:bold"></span></div>
-                <div>Location&nbsp;:&nbsp;<span class="district_show"></span></div>
+                <div>Location&nbsp;:&nbsp;<span id="last_district_show" class="district_show"></span></div>
                 <div>Doctor&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;<span class="doctor_name_show"></span></div>
-                <input type="hidden" id="doctor_chamber_details_id" name="doctor_chamber_details_id" value="">
-                
+                <input type="hidden" id="doctor_chamber_details_id" name="doctor_chamber_details_id" value="">                
             </li>
         </ul>
-                
+         <br/> <br/>      
         <div id="chamber_cmb_id_div_chamber_details" ></div>
          
         <!-- List ---->
-        
-        <p style="border:solid #CBE4E4">Appointment Date:
+        <br/>
+        <p >Appointment Date:
         <input type="date" id="appointment_date_chamber_details" name="appointment_date_chamber_details" value="" placeholder="Select Appointment Date">
         </p>
         
@@ -312,58 +311,58 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
         
     </div><!--/cont-->
     
-    <div data-theme="c" data-role="footer" data-position="fixed" style="text-align:center"><a data-role="button" style="width:70%" id="submitButton2" onClick="appointment_submit('DETAILS');" >Request Appointment</a></div>
+    <div data-theme="d" data-role="footer" data-position="fixed" style="text-align:center"><a data-role="button" style="width:70%" id="submitButton2" onClick="appointment_submit('DETAILS');" >Request Appointment</a></div>
 
  </div><!--/page-->
 
 <!-- ------------- Visit Success -------------------- -->
-	<div data-theme="c" data-role="page" id="page_success" >
-		<div data-theme="c" data-role="header" data-position="fixed" >
-		<a  data-role="button" href="#pageHome" class="ui-btn-left ui-btn-icon-notext"><img src="menu.png"></a> 
-        <!--<a  data-role="button" href="#pageHome" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-home">&nbsp;</a>-->
-        <a data-role="button" data-rel="back"  data-iconpos="left" class="ui-btn-right"><img  src="back.png"></a>
+	<div data-theme="d" data-role="page" id="page_success" >
+		<div data-theme="d" data-role="header" data-position="fixed" >
+		<a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-inline ui-icon-search" onClick="menuClick();" ></a>
+        <!--<a data-role="button" data-rel="back"  data-iconpos="left" class="ui-btn-right"><img src="back.png"></a>-->
         <h3>Success</h3>
 	  </div>
 		<div data-role="content">
         	<!--<div>Submitted Successfully</div>-->		
             <br>
-			
-           <!-- <div id="success_message" style="background-image:url(result_back.png); background-repeat:no-repea; width:300px; margin:0px auto; height:200px; color:#FFF; font-size:20px; vertical-align:middle; text-align:center; padding-top:5px;" ></br>&nbsp;</div>-->
-            <div id="success_message" style="color:#005B5B; font-size:20px; vertical-align:middle; text-align:center; padding-top:5px;" ></br>&nbsp;</div>
+            			
+            <div id="success_message" style="background-color:#EFF8F2; width:90%; margin:0px auto; height:200px; color:#589A6C; font-size:20px; vertical-align:middle; text-align:center; padding:5px; border-radius:10px; border:1px solid #569E77;" ></br>&nbsp;</div>
+            
+            <!--<div id="success_message" style="background-image:url(result_back.png); background-repeat:no-repeat; width:300px; margin:0px auto; height:200px; color:#FFF; font-size:20px; vertical-align:middle; text-align:center; padding:5px;" ></br>&nbsp;</div>-->
+            
             
 		</div>
 		
-		<div data-theme="c" data-role="footer" data-position="fixed" style="text-align:center"></div>	
+		<div data-theme="d" data-role="footer" data-position="fixed" style="text-align:center"></div>	
 	</div>
 
 
 <!--==========================Profile====================-->
-<div data-theme="c" data-role="page" id="page_profile">
-    <div data-theme="c" data-role="header" data-position="fixed">
-    <a  data-role="button" href="#pageHome" class="ui-btn-left ui-btn-icon-notext"><img src="menu.png"></a>
-    <!--<a  data-role="button" href="#pageHome" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-home">&nbsp;</a>-->
-    
-        <h3>Profile</h3>
+<div data-theme="d" data-role="page" id="page_profile">
+    <div data-theme="d" data-role="header" data-position="fixed">
+    <a class="ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-inline ui-icon-home" onClick="menuClick();" ></a>
+   
+        <h3 style="text-shadow:none;" >Profile</h3>
     </div>
     
     <div data-role="content">
         
         
         <table  border="0" class="ui-body-d ui-shadow table-stripe ui-responsive" data-role="table" data-theme="d"  data-mode="display:none" style="cell-spacing:0px; width:100%; font-size:98%;">
-        	<tr >
-              <td style="width:100%;" ><strong style="font-size:15px; color:#008040">Member ID:</strong><input id="patient_id" name="patient_id" type="text" style="background-color:#D9ECEC" readonly ></td>
+        	<!--<tr >
+              <td style="width:100%;" ><strong style="font-size:15px;">Member ID:</strong><input id="patient_id" name="patient_id" type="text" style="background-color:#EDF8FE;" readonly ></td>
                        
-            </tr>
+            </tr>-->
             <tr >
-              <td style="width:100%;" ><strong style="font-size:15px; color:#008040">Mobile:</strong><input  id="patient_mobile" name="patient_mobile"  type="text"  style="background-color:#D9ECEC" readonly></td>
-            </tr>
-            
-            <tr >
-              <td style="width:100%;" ><strong style="font-size:15px; color:#008040">Name:</strong><input id="patient_name" name="patient_name" type="text"></td>
+              <td style="width:100%;" ><strong style="font-size:15px;">Mobile:</strong><input  id="patient_mobile" name="patient_mobile"  type="text"  style="background-color:#EDF8FE" readonly></td>
             </tr>
             
             <tr >
-              <td style="width:100%;" ><strong style="font-size:15px; color:#008040">Address:</strong><input  id="patient_address" name="patient_address"  type="text"></td>
+              <td style="width:100%;" ><strong style="font-size:15px;">Name:</strong><input id="patient_name" name="patient_name" type="text"></td>
+            </tr>
+            
+            <tr >
+              <td style="width:100%;" ><strong style="font-size:15px;0">Address:</strong><input  id="patient_address" name="patient_address"  type="text"></td>
             </tr>
             </table>
         <br>
@@ -390,7 +389,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
             </table>
         <br>-->
 	
-         <a data-role="button" onClick="profile_edit();" id="btn_profile_update">Update Profile</a>
+         <a data-role="button"  onClick="profile_edit();" id="btn_profile_update">Update Profile</a>
          
     	<div id="error_profile_edit" style="color:#B70000"></div>        
         <div align="center"><img id="wait_image_profile" style="" width="50px;" src="loading.gif" alt=""></div>
@@ -406,7 +405,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 <br>
 <br>
 
-    <div data-theme="c" data-role="footer" data-position="fixed"></div>			
+    <div data-theme="d" data-role="footer" data-position="fixed"></div>			
  </div><!--/page-->
  
 

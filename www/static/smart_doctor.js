@@ -1,9 +1,12 @@
 
 //online
 var apipath="http://eapps001.cloudapp.net/smart_doctor/";
+var imgPath="http://eapps001.cloudapp.net/smart_doctor/static/doc_image/";
 
 //local
 //var apipath="http://127.0.0.1:8000/smart_doctor/";
+//var imgPath="http://127.0.0.1:8000/smart_doctor/static/doc_image/";
+
 
 var url =''
 var latitude="";
@@ -35,6 +38,10 @@ function replace_special_char(string_value){
 // -------------
 
 $(document).ready(function(){
+		
+		$("#btn_reg").show();
+		$("#h_user_name").hide();
+		
 		$("#wait_image_login").hide();
 		$("#loginButton").show();		
 		
@@ -49,14 +56,17 @@ $(document).ready(function(){
 		$("#btn_sync_location").show();
 		
 		$(".specialty_show").text("");
+		
+		
 		$(".district_show").text("");
 		$("#doctor_area_district").val("");
 		
 		$(".doctor_name_show").text("");
 		$(".doctor_id_show").text("");
+		
 		//alert(localStorage.synced)
 		// -------------- If Not synced, Show login
-		if ((localStorage.synced!='YES')){	
+		/*if ((localStorage.synced!='YES')){	
 			$("#user_id").val("")
 			$("#user_pass").val("")
 			$("#user_name").val("");
@@ -64,42 +74,132 @@ $(document).ready(function(){
 		
 				
 			url = "#login";		
-		}else{
-			$("#user_id").val(localStorage.user_id)
-			$("#user_pass").val(localStorage.user_pass)
-			$("#user_name").val(localStorage.user_name);
-			$("#user_address").val(localStorage.user_address);
+		}else{*/
+			//alert(localStorage.user_name);
 			
-			url = "#pageHome";
-		}
+			
+			
+			//----------------- last three
+			
+			//$("#error_home_page").text(apipath+'syncmobile_patient/check_doc_apoinment?patient_mobile='+localStorage.user_mobile);
+			
+			
+			
+			if (localStorage.user_mobile==undefined){
+				url = "#pageHome";
+			
+			}else{
+				
+				$("#h_user_name").show();
+				$("#btn_reg").hide();
+				
+				$("#user_id").val(localStorage.user_id)
+				$("#user_pass").val(localStorage.user_pass)
+				$("#user_name").val(localStorage.user_name);
+				$("#h_user_name").text(localStorage.user_name);
+				$("#user_address").val(localStorage.user_address);
+				
+								
+				$.ajax({
+					 type: 'POST',
+					 url: apipath+'syncmobile_patient/check_doc_apoinment?patient_mobile='+localStorage.user_mobile,
+					 success: function(result) {
+						
+						var doctorList = result.split('<rd>');
+						var doctorListLength=doctorList.length
+						
+						var doctor_cmb_list=''			
+						for (var i=0; i < doctorListLength; i++){
+							var doctorListArray = doctorList[i].split('<fd>');
+							var doctorID=doctorListArray[0];
+							var doctorName=doctorListArray[1];
+							var showSpecialty=doctorListArray[2];
+							if (doctorID!=''){
+								doctor_cmb_list+='<li style="border-bottom-style:solid;border-color:#CBE4E4;border-bottom-width:thin; padding:10px 5px;"><a style="height:auto;" onClick="doctorListNextLV(\''+doctorName+'-'+doctorID+'\')">'+doctorName+'-'+doctorID+'</li>';
+							}
+						}
+						
+						$(".specialty_show").text(showSpecialty);
+						//$(".district_show").text(districtAreaName);
+								
+						$("#patient_doctor_cmb_id_lv").append(doctor_cmb_list);
+						
+						
+					 }
+				});			
+				
+				url = "#pageHome";	
+			}
+			
+				
+			
+		/*}*/
 		
 		$.mobile.navigate(url);
 		
 	});
 
+
+
 function get_login() {
-	$("#error_login").html("");
 	url = "#login";
 	$.mobile.navigate(url);
 	}
 
 
+function menuClick(){
+	location.reload();
+	/*if (localStorage.synced!='YES'){	
+			$("#user_id").val("")
+			$("#user_pass").val("")
+			$("#user_name").val("");
+			$("#user_address").val("");	
+				
+			url = "#login";
+	}else{
+		url = "#pageHome";		
+	}*/
+	url = "#pageHome";	
+	$.mobile.navigate(url);	
+	
+}
+
+function goBackPage(){
+	$.mobile.back();
+	
+	var doctor_location_cmb_list=localStorage.districtCombo_list;
+	//alert(doctor_location_cmb_list)
+	//---	
+	var doctor_location_cmb_ob=$('#doctor_location_cmb_id_lv');
+	doctor_location_cmb_ob.empty()
+	doctor_location_cmb_ob.append(doctor_location_cmb_list).trigger('create');
+	
+	
+	if (localStorage.lastAreaDistName==undefined ){
+		$("#doctor_location_cmb_id").val('DHAKA');		
+	}else{
+		$("#doctor_location_cmb_id").val(localStorage.lastAreaDistName);
+	}	
+	doctor_location_cmb_ob.listview("refresh");
+}
+
+
 //========================= Longin: Check user
 function check_user() {
-	var user_id=$("#user_id").val().toUpperCase();
+	var mobile_no=$("#mobile_no").val();
 	var user_pass=$("#user_pass").val();
 	
 	var user_name=$("#user_name").val();
 	user_name=replace_special_char(user_name)
 	
-	var user_address=$("#user_address").val();
-	user_address=replace_special_char(user_address)
+	//var user_address=$("#user_address").val();
+	//user_address=replace_special_char(user_address)
 	
 	var base_url='';
 	var photo_url='';
 	
 	//-----
-	if (user_id=="" || user_id==undefined || user_pass=="" || user_pass==undefined || user_name=="" || user_name==undefined){
+	if (mobile_no=="" || mobile_no==undefined || user_pass=="" || user_pass==undefined || user_name=="" || user_name==undefined){
 		$("#error_login").html("Required Member ID, PIN and Name");	
 	}else{
 			localStorage.synced='NO'
@@ -108,11 +208,11 @@ function check_user() {
 			$("#error_home_page").html("")
 			
 			//-----------------
-			//alert(apipath+'syncmobile_patient/check_user?patient_id='+user_id+'&password='+encodeURIComponent(user_pass)+'&patient_name='+encodeURIComponent(user_name)+'&patient_address='+encodeURIComponent(user_address)+'&sync_code='+localStorage.sync_code);
+			//alert(apipath+'syncmobile_patient/check_user?mobile_no='+mobile_no+'&password='+encodeURIComponent(user_pass)+'&patient_name='+encodeURIComponent(user_name)+'&sync_code='+localStorage.sync_code);
 			
 			$.ajax({
 					 type: 'POST',
-					 url: apipath+'syncmobile_patient/check_user?patient_id='+user_id+'&password='+encodeURIComponent(user_pass)+'&patient_name='+encodeURIComponent(user_name)+'&patient_address='+encodeURIComponent(user_address)+'&sync_code='+localStorage.sync_code,
+					 url: apipath+'syncmobile_patient/check_user?mobile_no='+mobile_no+'&password='+encodeURIComponent(user_pass)+'&patient_name='+encodeURIComponent(user_name)+'&sync_code='+localStorage.sync_code,
 					 success: function(result) {											
 							if (result==''){
 								$("#wait_image_login").hide();
@@ -131,10 +231,10 @@ function check_user() {
 								}else if (syncResultArray[0]=='SUCCESS'){
 									
 									localStorage.synced='YES';		
-									localStorage.user_id=user_id;
+									//localStorage.user_id=user_id;
 									localStorage.user_pass=user_pass
 									localStorage.user_name=user_name
-									localStorage.user_address=user_address
+									//localStorage.user_address=user_address
 									
 									localStorage.sync_code=syncResultArray[1];
 									localStorage.locationStr=syncResultArray[2];
@@ -152,7 +252,7 @@ function check_user() {
 										var districtAreaName = districtList[i]
 										
 										if (districtAreaName!=''){
-											doctorDistrictCombo+='<li class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-location" style="border-bottom-style:solid; border-color:#CBE4E4;border-bottom-width:thin"><a onClick="districtSearchNextLV(\''+districtAreaName+'\')">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+districtAreaName+'</a></li>';
+											doctorDistrictCombo+='<li class="ui-btn-icon-left ui-icon-location" onClick="doctor_list(\''+districtAreaName+'\')" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+districtAreaName+'</li>';
 											}		
 									}								
 									localStorage.districtCombo_list=doctorDistrictCombo
@@ -161,6 +261,10 @@ function check_user() {
 									$("#wait_image_login").hide();
 									$("#loginButton").show();
 									
+									
+									$("#h_user_name").text(localStorage.user_name);
+									$("#h_user_name").show();
+									$("#btn_reg").hide();
 									//----------------									
 									url = "#pageHome";
 									$.mobile.navigate(url);								
@@ -186,22 +290,23 @@ function check_user() {
 
 
 
-function sync_location(){	
+function x_sync_location(){	
 	$("#error_search_list").html("");
 	$("#wait_image_doctor_search").hide();
 	
-	var patientID=localStorage.user_id
-	if (patientID==''||patientID==undefined){
+	var user_mobile=localStorage.user_mobile
+	if (user_mobile==''||user_mobile==undefined){
 		$("#error_search_list").html("Required Registration")
 	}else{
 		$("#doctor_location_cmb_id_lv").hide();
 		$("#btn_sync_location").hide();		
 		$("#wait_image_doctor_search").show();
 		
-		//alert(apipath+'syncmobile_patient/sync_location?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code)							
+		//alert(apipath+'syncmobile_patient/sync_location?user_mobile='+localStorage.user_mobile+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code)							
+		
 		$.ajax({
 			 type: 'POST',
-			 url: apipath+'syncmobile_patient/sync_location?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code,
+			 url: apipath+'syncmobile_patient/sync_location?user_mobile='+localStorage.user_mobile+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code,
 			 success: function(result) {						
 					if (result==''){
 						$("#error_search_list").html('Network timeout. Please ensure you have active internet connection.');
@@ -221,6 +326,7 @@ function sync_location(){
 							localStorage.specialtyStr=resultArray[2];
 							
 							
+							
 							var doctorDistrictCombo='';									
 							var districtList = localStorage.locationStr.split('<fd>');
 							var districtListLength=districtList.length
@@ -228,10 +334,11 @@ function sync_location(){
 								var districtAreaName = districtList[i]
 								
 								if (districtAreaName!=''){
-									doctorDistrictCombo+='<li class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-location" style="border-bottom-style:solid; border-color:#CBE4E4;border-bottom-width:thin"><a onClick="districtSearchNextLV(\''+districtAreaName+'\')">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+districtAreaName+'</a></li>';
+									doctorDistrictCombo+='<li class="ui-btn ui-corner-all ui-btn-icon-left ui-icon-location" style="border-bottom-style:solid; border-color:#CBE4E4;border-bottom-width:thin"><a onClick="districtSearchNextLV(\''+districtAreaName+'\')">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+districtAreaName+'</a></li>';
 									}		
 							}								
 							localStorage.districtCombo_list=doctorDistrictCombo
+							
 							
 							$("#wait_image_doctor_search").hide();
 							$("#doctor_location_cmb_id_lv").show();
@@ -302,30 +409,24 @@ function search_page(specialty_name){
 	$("#doctor_location_cmb_id_lv").show();
 	$("#btn_sync_location").show();
 	
-	var spName=specialty_name;
-	
-	var specialtyList = localStorage.specialtyStr.split('<fd>');
-	var specialtyListLength=specialtyList.length;	
-	var selectedValue=0;
-	var specialty_cmb='<option value="0" >Select Specialty</option>'
-	for (var i=0; i < specialtyListLength; i++){
-		var specialtyName=specialtyList[i];										
-		specialty_cmb+='<option value="'+specialtyName+'" >'+specialtyName+'</option>';	
 		
-		if (specialtyName==spName){
-			selectedValue=i+1;
-		}
-				
-	}
-	
-	//------------------
-	var doctor_specialty_cmb_ob=$('#doctor_specialty_cmb_id');
-	doctor_specialty_cmb_ob.empty()
-	doctor_specialty_cmb_ob.append(specialty_cmb);
-	doctor_specialty_cmb_ob[0].selectedIndex = selectedValue;
-	
+	localStorage.specialty=specialty_name;	
+		
 	//-------------
-	$("#doctor_location_cmb_id").val('');
+	
+/*	var doctorDistrictCombo='';									
+	var districtList = localStorage.locationStr.split('<fd>');
+	var districtListLength=districtList.length
+	
+	
+	for (var i=0; i < districtListLength; i++){
+		var districtAreaName = districtList[i]		
+		if (districtAreaName!=''){
+			doctorDistrictCombo+='<li class="ui-btn-icon-left ui-icon-location" onClick="districtSearchNextLV(\''+districtAreaName+'\')" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+districtAreaName+'</li>';
+			}		
+	}								
+	localStorage.districtCombo_list=doctorDistrictCombo*/
+	
 	var doctor_location_cmb_list=localStorage.districtCombo_list;
 	//alert(doctor_location_cmb_list)
 	//---	
@@ -333,15 +434,25 @@ function search_page(specialty_name){
 	doctor_location_cmb_ob.empty()
 	doctor_location_cmb_ob.append(doctor_location_cmb_list);
 	
+	
+	if (localStorage.lastAreaDistName==undefined ){
+		$("#doctor_location_cmb_id").val('DHAKA');		
+	}else{
+		$("#doctor_location_cmb_id").val(localStorage.lastAreaDistName);
+	}
+	
+	
+	$(".specialty_show").text(localStorage.specialty);
 	//--------------------------	
 	url = "#page_search";
 	$.mobile.navigate(url);
 	
-	doctor_specialty_cmb_ob.selectmenu("refresh");
+	//doctor_specialty_cmb_ob.selectmenu("refresh");
 	doctor_location_cmb_ob.listview("refresh");
 }
 
-function districtSearchNextLV(district) {
+function x_districtSearchNextLV(district) {
+	
 	$("#error_search_list").html("");
 	$("#error_doctor_list").html("");		
 	$("#wait_image_doctor_list").hide();
@@ -356,30 +467,31 @@ function districtSearchNextLV(district) {
 	}
 	
 	
-function doctor_list(){
+function doctor_list(district){	
+	$("#doctor_location_cmb_id").val(district);	
 	var districtAreaName=$("#doctor_location_cmb_id").val();
 	
-	var specialty=$("#doctor_specialty_cmb_id").val();
+/*	var specialty=$("#doctor_specialty_cmb_id").val();
 	var showSpecialty=specialty;
 	if (specialty==0 || specialty=='0'){
 		specialty='';
 		showSpecialty='Any';
-		}
+		}*/
 	
 	if (districtAreaName==''){		
-		$("#error_search_list").text("Select Location");
+		$("#error_search_list").text("Search Location");
 	}else{
 			$("#error_search_list").text("");
 			
 			$("#doctor_location_cmb_id_lv").hide();
 			$("#wait_image_doctor_search").show();
 			
-			//alert(apipath+'syncmobile_patient/get_doctor_list?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&speciality='+specialty+'&district_area='+districtAreaName)
+			//alert(apipath+'syncmobile_patient/get_doctor_list?patient_mobile='+localStorage.user_mobile+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&speciality='+localStorage.specialty+'&district_area='+districtAreaName)
 			
 			// ajax-------
 			$.ajax({
 				 type: 'POST',
-				 url: apipath+'syncmobile_patient/get_doctor_list?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&speciality='+specialty+'&district_area='+districtAreaName,
+				 url: apipath+'syncmobile_patient/get_doctor_list?patient_mobile='+localStorage.user_mobile+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&speciality='+localStorage.specialty+'&district_area='+districtAreaName,
 				 success: function(result) {						
 						if (result==''){
 							$("#error_search_list").html('Network timeout. Please ensure you have active internet connection.');							
@@ -401,36 +513,48 @@ function doctor_list(){
 								var doctorList = doctor_string.split('<rd>');
 								var doctorListLength=doctorList.length
 								
-								var doctor_cmb_list=''			
+								var doctor_cmb_list='';
+								
 								for (var i=0; i < doctorListLength; i++){
 									var doctorListArray = doctorList[i].split('<fd>');
 									var doctorID=doctorListArray[0];
 									var doctorName=doctorListArray[1];
-									var description=doctorListArray[2];
+									var docImg=doctorListArray[2];
+									var description=doctorListArray[3];
+									var chemberName=doctorListArray[4];
+									var chemberAdd=doctorListArray[5];
+									
+													
 									if (doctorID!=''){
-										doctor_cmb_list+='<li style="border-bottom-style:solid;border-color:#CBE4E4;border-bottom-width:thin;"><a style="height:auto;" onClick="doctorListNextLV(\''+doctorName+'-'+doctorID+'\')">'+doctorName+'-'+doctorID+'</a></li><p style="font-size:12px; margin-top:0px; padding-top:0px; background-color:#A4D6EE;">'+description+'</p>';
+										doctor_cmb_list+='<ul data-role="listview" data-inset="true" style="margin-bottom:2px;">';
+										if (docImg==""){
+											doctor_cmb_list+='<li data-icon="false" onClick="doctorListNextLV(\''+doctorName+'-'+doctorID+'\')"><img src="'+imgPath+'default.png" style="margin:10px;" ><h3>'+doctorName+'</h3><h4>'+chemberName+'</h4><p>'+chemberAdd+'</p><p>'+description+'</p></li>';										
+										}else{
+											doctor_cmb_list+='<li data-icon="false" onClick="doctorListNextLV(\''+doctorName+'-'+doctorID+'\')"><img src="'+imgPath+docImg+'" style="margin:10px;" ><h3>'+doctorName+'</h3><h4>'+chemberName+'</h4><p>'+chemberAdd+'</p><p>'+description+'</p></li>';										
+										}
+										doctor_cmb_list+='</ul>';									
 									}
+									
 								}
-								
+								 
 								//-----------------
 								$("#error_search_list").text("");
 								$("#wait_image_doctor_search").hide();
 								$("#doctor_location_cmb_id_lv").show();
 								
 								
-								$(".specialty_show").text(showSpecialty);
+								$(".specialty_show").text(localStorage.specialty);
 								$(".district_show").text(districtAreaName);
 								$("#doctor_area_district").val(districtAreaName);
 								
-								//-------------
-								$("#doctor_cmb_id").val('');
 								
-								//---	
+								//-------------
+								$("#doctor_cmb_id").val('');	
 								$("#doctor_cmb_id_lv").show();
 								
 								var doctor_cmb_ob=$('#doctor_cmb_id_lv');
 								doctor_cmb_ob.empty()
-								doctor_cmb_ob.append(doctor_cmb_list);
+								doctor_cmb_ob.append(doctor_cmb_list).trigger('create');
 								
 								//--------------------------	
 								url = "#page_doctor";
@@ -444,7 +568,7 @@ function doctor_list(){
 								}
 						}
 					  },
-				  error: function(result) {			  
+				  error: function(result) {				  		
 					  $("#error_search_list").html('Invalid Request');
 					  $("#wait_image_doctor_search").hide();
 					  $("#doctor_location_cmb_id_lv").show();	  
@@ -485,11 +609,11 @@ function doctor_chamber(){
 			var doctorName=doctorArray[0]
 			var doctorId=doctorArray[1]
 			
-			//alert(apipath+'syncmobile_patient/get_doctor_chamber?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&doctorId='+doctorId)
+			//alert(apipath+'syncmobile_patient/get_doctor_chamber?patient_mobile='+localStorage.user_mobile+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&doctorId='+doctorId)
 			// ajax-------
 			$.ajax({
 				 type: 'POST',
-				 url: apipath+'syncmobile_patient/get_doctor_chamber?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&doctorId='+doctorId,
+				 url: apipath+'syncmobile_patient/get_doctor_chamber?patient_mobile='+localStorage.user_mobile+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&doctorId='+doctorId,
 				 success: function(result) {						
 						if (result==''){
 							$("#error_doctor_list").html('Network timeout. Please ensure you have active internet connection.');							
@@ -503,32 +627,62 @@ function doctor_chamber(){
 								$("#doctor_cmb_id_lv").show();
 							}else if (resultArray[0]=='SUCCESS'){
 									
-								var chamber_string=resultArray[1];
-																
-								//----------------
-								var chamberList = chamber_string.split('<rd>');
-								var chamberListLength=chamberList.length
+								var chamber_string=resultArray[1];																
 								
-								var chamber_cmb_list='<ul id="chamber_cmb_id_lv" data-role="listview" data-filter="false" data-inset="true">'			
-								for (var i=0; i < chamberListLength; i++){
-									var chamberListArray = chamberList[i].split('<fd>');
-									var chamberID=chamberListArray[0];
-									var chamberName=chamberListArray[1];
-									var chamberArea=chamberListArray[2];
-									var chamberDistrict=chamberListArray[3];
+								//----------------						
+								
+								var chamberListArray = chamber_string.split('<rdrdrd>');
+								
+								var chamber_cmb_list="";
+								
+								for (var i=0; i < chamberListArray.length; i++){
+									
+									var chamberIdListArray=chamberListArray[i];
+									
+									
+									var chamberIdListArray = chamberIdListArray.split('<fd>');
+									var chamberID=chamberIdListArray[0];
+									var chamberName=chamberIdListArray[1];
+									var chamberArea=chamberIdListArray[2];
+									var chamberDistrict=chamberIdListArray[3];
+									var chambersAddress=chamberIdListArray[4];
+									var chambersDay=chamberIdListArray[5];									
 									var chamberAreaDistrict=chamberArea+'-'+chamberDistrict;
-									if (chamberID!=''){
-										if(areaDistrictName.toUpperCase()==chamberAreaDistrict.toUpperCase()){
-											chamber_cmb_list+='<li style="border-bottom-style:solid; border-color:#CBE4E4; border-bottom-width:thin"><label style="background:#81C0C0;"><input type="radio" name="RadioChamber" value="'+chamberID+'" id="radio_'+chamberID+'" checked>'+chamberID+'-'+chamberName+'</label><p ><table ><tr ><td style="width:100%">'+chamberArea+', '+chamberDistrict+'</td><td><a  data-role="button" style="width:30px;" href="#" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-top ui-icon-bars ui-btn-icon-notext" onClick="chamberDetails(\''+chamberID+'-'+chamberName+'\')"></a></td></tr></table></p></li>';										
+									
+									chamber_cmb_list+='<ul data-role="listview" data-inset="false" style="margin-bottom:2px;">'
+																		
+									if (chamberID!=''){											
+										var scheduleArray = chambersDay.split('<rd>');										
+										scheduleStr='';
+										chambersDaySchedule='';
+										if (chambersDay!=undefined){
+											chambersDaySchedule='<ul data-role="listview" data-inset="true">';
+											for (var j=0; j < scheduleArray.length; j++){
+												scheduleStr=scheduleArray[j]											
+												dayTimeArray=scheduleStr.split('<rdrd>');
+												if (dayTimeArray[1]!=undefined){											
+													chambersDaySchedule+='<li style="font-size:12px;">'+dayTimeArray[0]+'-'+dayTimeArray[1]+'</li>';
+												}else{
+													chambersDaySchedule+='<li style="font-size:12px;">Not Available</li>';
+													}												
+											}
+											chambersDaySchedule+='</ul>';
+											if(areaDistrictName.toUpperCase()==chamberAreaDistrict.toUpperCase()){											
+												chamber_cmb_list+='<li style="background-color:#F2F8FD;"><label ><input type="radio" name="RadioChamber" value="'+chamberID+'" id="radio_'+chamberID+'" checked >'+chamberID+'-'+chamberName+'</label><p>'+chamberArea+'</p><p>'+chamberDistrict+'</p><p>'+chambersAddress+'</p><p>'+chambersDaySchedule+'</p>';									
+											}else{
+												chamber_cmb_list+='<li style="background-color:#F2F8FD;"><label ><input type="radio" name="RadioChamber" value="'+chamberID+'" id="radio_'+chamberID+'" >'+chamberID+'-'+chamberName+'</label><p>'+chamberArea+'</p><p>'+chamberDistrict+'</p><p>'+chambersAddress+'</p><p>'+chambersDaySchedule+'</p>';									
+												}
 										}else{
-											chamber_cmb_list+='<li style="border-bottom-style:solid; border-color:#CBE4E4; border-bottom-width:thin"><label style="background:#81C0C0;"><input type="radio" name="RadioChamber" value="'+chamberID+'" id="radio_'+chamberID+'">'+chamberID+'-'+chamberName+'</label><p ><table ><tr ><td style="width:100%">'+chamberArea+', '+chamberDistrict+'</td><td><a data-role="button" style="width:30px;" href="#" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-top ui-icon-bars ui-btn-icon-notext" onClick="chamberDetails(\''+chamberID+'-'+chamberName+'\')"></a></td></tr></table></p></li>';
-										}
-									}
+											chamber_cmb_list+='<li style="background-color:#F2F8FD;"><label ><input type="radio" name="RadioChamber" value="'+chamberID+'" id="radio_'+chamberID+'" >'+chamberID+'-'+chamberName+'</label><p>'+chamberArea+'</p><p>'+chamberDistrict+'</p><p>'+chambersAddress+'</p>';								
+											}
+									}									
+									chamber_cmb_list+='</li>'									
+									chamber_cmb_list+='</ul>'
+																	
 								}
-								chamber_cmb_list+='</ul>'
 								
 								//-----------------
-								$("#error_doctor_list").text("");
+								//$("#error_doctor_list").text("");
 								$("#wait_image_doctor_list").hide();
 								$("#doctor_cmb_id_lv").show();
 								
@@ -541,12 +695,11 @@ function doctor_chamber(){
 								$("#chamber_cmb_id_div").append(chamber_cmb_list).trigger('create');
 								
 								//---	
-								//var chamber_cmb_ob=$('#chamber_cmb_id_lv');
-								//chamber_cmb_ob.empty()
-								//chamber_cmb_ob.append(chamber_cmb_list);
+							
 								
 								$("#submitButton1").show();
 								$("#submitButton2").show();
+								
 								
 								//--------------------------	
 								url = "#page_doctor_chamber";
@@ -560,7 +713,8 @@ function doctor_chamber(){
 								}
 						}
 					  },
-				  error: function(result) {			  
+				  error: function(result) {	
+				  	  //$("#error_doctor_list").html(apipath+'syncmobile_patient/get_doctor_chamber?patient_mobile='+localStorage.user_mobile+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&doctorId='+doctorId)		  
 					  $("#error_doctor_list").html('Invalid Request');
 					  $("#wait_image_doctor_list").hide();
 					  $("#doctor_cmb_id_lv").show();
@@ -575,6 +729,7 @@ function chamberDetails(chamberIdName){
 	$("#wait_image_doctor_chamber_details").hide();
 	$("#doctor_chamber_details_id").val("");
 	
+	//alert(localStorage.lastAreaDistName);
 	
 	var chamberIdName=chamberIdName
 	
@@ -602,7 +757,7 @@ function chamberDetails(chamberIdName){
 			// ajax-------
 			$.ajax({
 				 type: 'POST',
-				 url: apipath+'syncmobile_patient/get_chamber_details?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&doctorId='+doctorId+'&chamberId='+chamberId,
+				 url: apipath+'syncmobile_patient/get_chamber_details?patient_mobile='+localStorage.user_mobile+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&doctorId='+doctorId+'&chamberId='+chamberId,
 				 success: function(result) {						
 						if (result==''){
 							$("#error_chamber_list").html('Network timeout. Please ensure you have active internet connection.');							
@@ -624,7 +779,7 @@ function chamberDetails(chamberIdName){
 								//----------------
 								
 								//alert(chamberListLength)
-								var chamber_cmb_list='<ul id="chamber_cmb_id_lv_details" data-role="listview" data-filter="false" data-inset="true">'			
+								var chamber_cmb_list='<ul id="chamber_cmb_id_lv_details" data-role="listview" data-filter="false" data-inset="false">'			
 								
 								var chamberListArray = chamber_string.split('<fd>');
 								var chamberID=chamberListArray[0];
@@ -704,7 +859,9 @@ function chamberDetails(chamberIdName){
 }
 
 function appointment_submit(submitFrom){	
-
+	var lastAreaDistName=$("#last_district_show").text();
+	localStorage.lastAreaDistName=lastAreaDistName
+	
 	var submitFrom=submitFrom;
 	
 	$("#error_chamber_list").text("");
@@ -715,7 +872,7 @@ function appointment_submit(submitFrom){
 	
 	
 	var doctorNameID=$("#doctor_cmb_id").val();
-	
+		
 	if (doctorNameID==''){		
 		$("#error_chamber_list").text("Select Doctor");
 	}else{
@@ -780,13 +937,14 @@ function appointment_submit(submitFrom){
 					
 					//url_sms= "http://eapps001.cloudapp.net/smart_doctor/sms_api/sms_submit?password=Compaq510DuoDuo&mob="+str(mob)+"&midia=app&msg="+str(msg)
 					//url: apipath+'syncmobile_patient/submit_appointment?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&doctorId='+doctorId+'&chamberId='+chamberId+'&appointmentDate='+appointmentDate,
+					
+					//alert(apipath+"sms_api/sms_submit?password=Compaq510DuoDuo&mob="+localStorage.user_mobile+"&midia=app&msg="+msg+'&sync_code='+localStorage.sync_code);
 						 			
 					// ajax------- 2015-10-20
 					$.ajax({
 						 type: 'POST',
 						 url: apipath+"sms_api/sms_submit?password=Compaq510DuoDuo&mob="+localStorage.user_mobile+"&midia=app&msg="+msg+'&sync_code='+localStorage.sync_code,
-						 success: function(result) {						
-								//alert (result)
+						 success: function(result) {								
 								if (result==''){
 									result_string='Network timeout. Please ensure you have active internet connection.'
 									
@@ -804,7 +962,7 @@ function appointment_submit(submitFrom){
 									var result_string=""		
 									if (resultArray[0]=='STARTFailed'){						
 										
-										result_string='Authentication error. Please register and sync to retry.'
+										result_string='Authentication error. Please register and sync to retry.';
 										
 										$("#error_chamber_list").html(result_string);
 										$("#wait_image_doctor_chamber").hide();
@@ -858,10 +1016,10 @@ function appointment_submit(submitFrom){
 								}
 							  },
 						  error: function(result) {			  
-							  $("#error_chamber_list").html('Chamber Settings is Incomplte. Please Try Latter.');
+							  $("#error_chamber_list").html('Invalid Request');
 							  $("#wait_image_doctor_chamber").hide();
 							  
-							  $("#error_chamber_details").html('Chamber Settings is Incomplte. Please Try Latter.');							
+							  $("#error_chamber_details").html('Invalid Request');							
 							  $("#wait_image_doctor_chamber_details").hide();
 							  
 							  $("#submitButton1").show();
@@ -973,16 +1131,16 @@ function get_profile(){
 	$("#wait_image_profile").hide();	 
 	$("#btn_profile_update").show();
 	
-	var patientID=localStorage.user_id
+	//var patientID=localStorage.user_id
 	var patient_mobile=localStorage.user_mobile
 	var patient_name=localStorage.user_name
 	var patient_address=localStorage.user_address
 	
-	if (patientID==''||patientID==undefined || patient_mobile=='' || patient_mobile==undefined || patient_name=='' || patient_name==undefined){
+	if ( patient_mobile=='' || patient_mobile==undefined || patient_name=='' || patient_name==undefined){
 		$("#error_home_page").html("Required Registration")
 	}else{
 		
-		$("#patient_id").val(patientID);
+		//$("#patient_id").val(patientID);
 		$("#patient_mobile").val(patient_mobile);		
 		$("#patient_name").val(patient_name);
 		
@@ -1004,8 +1162,9 @@ function profile_edit(){
 	$("#wait_image_profile").hide();
 	$("#btn_profile_update").show();
 	
-	var patientID=localStorage.user_id
-	if (patientID==''||patientID==undefined){
+	var patient_mobile=localStorage.user_mobile
+	
+	if (patient_mobile==''|| patient_mobile==undefined){
 		$("#error_profile_edit").html("Required Registration")
 	}else{
 		
@@ -1024,10 +1183,11 @@ function profile_edit(){
 			$("#error_profile_edit").html("Required Profile Name")
 		}else{
 			
-			//alert(apipath+'syncmobile_patient/patient_profile_edit?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&patient_name='+encodeURIComponent(patient_name)+'&patient_mobile='+encodeURIComponent(patient_mobile)+'&patient_address='+encodeURIComponent(patient_address))							
+			//alert(apipath+'syncmobile_patient/patient_profile_edit?patient_mobile='+localStorage.user_mobile+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&patient_name='+encodeURIComponent(patient_name)+'&patient_address='+encodeURIComponent(patient_address))							
+			
 			$.ajax({
 				 type: 'POST',
-				 url: apipath+'syncmobile_patient/patient_profile_edit?patient_id='+localStorage.user_id+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&patient_name='+encodeURIComponent(patient_name)+'&patient_address='+encodeURIComponent(patient_address),
+				 url: apipath+'syncmobile_patient/patient_profile_edit?patient_mobile='+localStorage.user_mobile+'&password='+encodeURIComponent(localStorage.user_pass)+'&sync_code='+localStorage.sync_code+'&patient_name='+encodeURIComponent(patient_name)+'&patient_address='+encodeURIComponent(patient_address),
 				 success: function(result) {						
 						if (result==''){
 							$("#error_profile_edit").html('Network timeout. Please ensure you have active internet connection.');
@@ -1065,7 +1225,7 @@ function profile_edit(){
 								}
 						}
 					  },
-				  error: function(result) {			  
+				  error: function(result) {				  	 
 					  $("#error_profile_edit").html('Invalid Request'); 
 					  $("#wait_image_profile").hide();
 				  }
